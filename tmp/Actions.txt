@@ -1,0 +1,4 @@
+EDIT,	WUYOU,	Name,	,	,	android.widget.EditText
+EDIT,	13641746250,	Phone,	,	,	android.widget.EditText
+EDIT,	178151355@qq.com,	Email,	,	,	android.widget.EditText
+CLICK,	,	,	com.android.contacts:id/menu_save,	Save,	android.widget.TextView
