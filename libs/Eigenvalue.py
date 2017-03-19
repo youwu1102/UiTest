@@ -16,7 +16,6 @@ class Eigenvalue(object):
         print Eigenvalue.__get_kinds(dump_content, pattern_resource_id)
         print Eigenvalue.__get_kinds(dump_content, pattern_text)
 
-
     @staticmethod
     def __get_kinds(content, pattern):
         list_type = []

@@ -1,10 +1,10 @@
 # -*- encoding:UTF-8 -*-
-__author__ = 'c_youwu'
 from PrintInfo import Print
 from GlobalVariable import GlobalVariable
 import os
 import re
 from time import sleep
+from ADB import Adb
 
 
 class Utility(object):
@@ -57,6 +57,7 @@ class Utility(object):
 
     @staticmethod
     def check_result(except_result, except_true, actual_result):
+
         """
         参考上方 run_command_on_device 中描述
         """
@@ -101,13 +102,13 @@ class Utility(object):
         return pids
 
     @staticmethod
-    def push_file_to_device(local, remote):
-        cmd = '{adb} push {local} {remote}'.format(adb=GlobalVariable.adb_exe, local=local, remote=remote)
+    def push_file_to_device(local, remote, serial_number=''):
+        cmd = Adb.push(local=local, remote=remote, serial_number=serial_number)
         Utility.run_command_on_pc(cmd)
         sleep(1)
 
     @staticmethod
-    def pull_file_to_pc(remote, local):
-        cmd = '{adb} pull {remote} {local}'.format(adb=GlobalVariable.adb_exe, local=local, remote=remote)
+    def pull_file_to_pc(remote, local, serial_number=''):
+        cmd = Adb.pull(remote=remote, local=local, serial_number=serial_number)
         Utility.run_command_on_pc(cmd)
         sleep(1)
