@@ -1,6 +1,6 @@
 # -*- encoding:UTF-8 -*-
-__author__ = 'c_youwu'
 import re
+import difflib
 
 
 class Eigenvalue(object):
@@ -33,12 +33,26 @@ class Eigenvalue(object):
         return string
 
 
+    @staticmethod
+    def compare_dump(dump1, dump2):
+        dump1_content=Eigenvalue.__open_dump(dump1)
+        dump2_content=Eigenvalue.__open_dump(dump2)
+        s = difflib.SequenceMatcher(None, dump1_content, dump2_content)
+        for a in s.get_grouped_opcodes():
+            print a
+        # for tag, i1, i2, j1, j2 in s.get_opcodes():
+        #     print ("%7s a[%d:%d] (%s) b[%d:%d] (%s)" %  (tag, i1, i2, dump1_content[i1:i2], j1, j2, dump2_content[j1:j2]))
+
+    @staticmethod
+    def __open_dump(dump_path):
+        with open(dump_path, 'r') as dump:
+            tmp = dump.read()
+        return tmp.replace('<node', '\n<node')
 
 
 if __name__ == '__main__':
     import os
-    p="C:\\Users\\c_youwu\Desktop\\traing\\"
-    for x in os.listdir(p):
-        if x.endswith('.uix'):
-            print x
-            Eigenvalue.calculate_eigenvalue(os.path.join(p,x))
+    p = "C:\\Users\\wuyou\\Desktop\\UiTest\\logs\\tmp"
+    d1= os.path.join(p,'dump_1035839587978767125.uix')
+    d2= os.path.join(p,'dump_5694674565452784425.uix')
+    Eigenvalue.compare_dump(d1,d2)

@@ -1,4 +1,3 @@
-__author__ = 'c_youwu'
 # -*- encoding:UTF-8 -*-
 from os.path import join
 

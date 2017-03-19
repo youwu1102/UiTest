@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<app packagename="com.hupu.games" type="Form"></app>
+	<app packagename="com.baidu2.com.map" type="Map"></app>
+	<app packagename="com.baidu3.com.map" type="Map"></app>
+	<app packagename="com.baidu4.com.map" type="Map"></app>
+	<app packagename="com.baidu5.com.map" type="Map"></app>
+	<app packagename="com.baidu6.com.map" type="Map"></app>
+	<app packagename="com.baidu7.com.map" type="Map"></app>
+	<app packagename="com.baidu1.com.map" type="sss"></app>
+</root>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Priority>
+	<level1>
+		<search string="足球">
+			<mapping string="足球" action="click"></mapping>
+		</search>
+		<search string="篮球">
+			<mapping string="篮球" action="click"></mapping>
+			<mapping string="NBA" action="click"></mapping>
+		</search>
+		<search string="论坛">
+			<mapping string="论坛" action="click"></mapping>
+			<mapping string="BBS" action="click"></mapping>
+			<mapping string="bbs" action="click"></mapping>
+		</search>
+		<search string="登入">
+			<mapping string="登入" action="click"></mapping>
+		</search>
+		<search string="注册">
+			<mapping string="注册" action="click"></mapping>
+		</search>
+		<search string="登入">
+			<mapping string="account" value="165135123" action="edit"></mapping>
+			<mapping string="password" value="asdsadsad" action="edit"></mapping>
+			<mapping string="登入" value="asdsadsad" action="click"></mapping>
+		</search>
+	</level1>
+	<level2>
+		<search string="数据">
+			<mapping string="数据" action="click"></mapping>
+		</search>
+		<search string="升级">
+			<mapping string="取消" action="click"></mapping>
+		</search>
+	</level2>
+	<level3>
+		<search string="更多">
+			<mapping string="更多" action="click"></mapping>
+		</search>	
+	</level3>
+</Priority>
