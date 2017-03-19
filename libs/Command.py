@@ -37,9 +37,6 @@ class Utility(object):
 
 
 
-
-
-
 if __name__ == '__main__':
     import os
     p="C:\\Users\\c_youwu\Desktop\\traing\\"
