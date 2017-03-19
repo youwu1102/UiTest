@@ -6,8 +6,8 @@ import os
 import re
 from time import sleep
 
-class Utility(object):
 
+class Utility(object):
     pid_expression = re.compile(r'\d+')
     @staticmethod
     def run_command_on_pc(cmd, except_result='', except_true=True, need_output=False):
