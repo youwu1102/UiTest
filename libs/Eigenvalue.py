@@ -5,7 +5,6 @@ from GlobalVariable import GlobalVariable
 
 
 class Eigenvalue(object):
-
     dict_class_name_mapping_id = dict()
 
     @staticmethod
@@ -29,17 +28,8 @@ class Eigenvalue(object):
         tree.write(xml_path, encoding="utf-8", xml_declaration=True)
 
     @staticmethod
-    def calculate_eigenvalue(dump_xml):
-        with open(dump_xml) as dump:
-            dump_content = dump.read()
+    def calculate_eigenvalue(dump_content):
         return Eigenvalue.__get_class_name_sequence(dump_content)
-
-        # pattern = re.compile(r'class=\".*?\"')
-        # pattern_resource_id = re.compile(r'resource-id=\".*?\"')
-        # pattern_text = re.compile(r'text=\".*?\"')
-        # print Eigenvalue.__get_kinds(dump_content, pattern_class)
-        # print Eigenvalue.__get_kinds(dump_content, pattern_resource_id)
-        # print Eigenvalue.__get_kinds(dump_content, pattern_text)
 
     @staticmethod
     def __get_kinds(content, pattern):
@@ -60,8 +50,9 @@ class Eigenvalue(object):
         for re_result in pattern.finditer(content):
             class_name = re_result.group().replace('class="', '')[:-1]
             sequence += Eigenvalue.__get_id_of_class_name(class_name=class_name)
+        if len(sequence) > 60:
+            return sequence[:60]
         return sequence
-
 
     @staticmethod
     def __get_id_of_class_name(class_name):
@@ -73,22 +64,15 @@ class Eigenvalue(object):
                 GlobalVariable.class_name_mapping_id_configuration)
         return '%03x' % int(class_id)
 
-    @staticmethod
-    def __open_dump(dump_path):
-        with open(dump_path, 'r') as dump:
-            tmp = dump.read()
-        return tmp
-
-
 if __name__ == '__main__':
-    import time
-    start = time.time()
-    import os
-    p = 'C:\\Git\\UiTest\\logs\\tmp'
-    for f in os.listdir(p):
-        print Eigenvalue.calculate_eigenvalue(os.path.join(p, f))
-    print time.time()-start
-
+    pass
+    # import time
+    # start = time.time()
+    # import os
+    # p = 'C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\tmp'
+    # for f in os.listdir(p):
+    #     print Eigenvalue.calculate_eigenvalue(os.path.join(p, f))
+    # print time.time()-start
     # dict_class_name_mapping = Eigenvalue.get_dict_of_class_name_mapping(GlobalVariable.class_name_mapping_id_configuration)
     # if class_name not in dict_class_name_mapping.keys():
     #     Eigenvalue.insert_class_name_mapping_in_xml(GlobalVariable.class_name_mapping_id_configuration, class_name, len(dict_class_name_mapping.keys()))

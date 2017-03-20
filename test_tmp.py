@@ -14,6 +14,10 @@ from subprocess import PIPE
 a = Popen('adb shell uiautomator runtest /data/local/tmp/Demo.jar -c Monday.afternoon#test3rd_App', stdout=PIPE, stderr=PIPE, shell=True)
 count = 0
 abs_path = GlobalVariable.working_directory
+package_name = "com.android.contacts"
+
+
+
 for line in iter(a.stdout.readline, ''):
     print line
     if 'STATE:WAIT' in line:

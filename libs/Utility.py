@@ -112,3 +112,10 @@ class Utility(object):
         cmd = Adb.pull(remote=remote, local=local, serial_number=serial_number)
         Utility.run_command_on_pc(cmd)
         sleep(1)
+
+
+    @staticmethod
+    def open_dump(dump_path):
+        with open(dump_path, 'r') as dump:
+            tmp = dump.read()
+        return tmp

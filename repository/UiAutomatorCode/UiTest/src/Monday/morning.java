@@ -88,11 +88,32 @@ public class morning extends UiAutomatorTestCase{
 		object.clickAndWaitForNewWindow();
 
 	}
-
+	
 	public static void Start(String[] string_list) {
+		if (string_list[2].endsWith(""))
+		{
+			startApp(string_list[1]);
+		}
+		else
+		{
+			startApp(string_list);
+		}
+
+	}
+	
+	private static void startApp(String[] string_list) {
 		try {
 			Runtime.getRuntime().exec(
 					"am start -n " + string_list[1] + "/" + string_list[2]);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private static void startApp(String app) {
+		try {
+			Runtime.getRuntime().exec("am start " + app);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
