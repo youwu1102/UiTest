@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+    <class id="0" name="android.widget.FrameLayout" />
+	<class id="1" name="android.widget.LinearLayout" />
+	<class id="2" name="android.widget.RelativeLayout" />
+	<class id="3" name="android.view.ViewGroup" />
+	<class id="4" name="android.widget.TextView" />
+	<class id="5" name="android.widget.HorizontalScrollView" />
+	<class id="6" name="android.widget.ScrollView" />
+	<class id="7" name="android.widget.ImageView" />
+	<class id="8" name="android.widget.Button" />
+	<class id="9" name="android.widget.ImageButton" />
+	<class id="10" name="android.view.View" />
+	<class id="11" name="android.widget.EditText" />
+	<class id="12" name="android.widget.Spinner" />
+	<class id="13" name="android.support.v4.view.ViewPager" />
+	<class id="14" name="android.widget.ListView" />
+	</root>

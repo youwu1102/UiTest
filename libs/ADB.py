@@ -1,6 +1,5 @@
 __author__ = 'c_youwu'
 
-
 class Adb(object):
     adb_exe = 'adb'
 

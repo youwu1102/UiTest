@@ -21,7 +21,7 @@ for line in iter(a.stdout.readline, ''):
         tmp_xml = os.path.join(abs_path, 'logs', 'tmp', '%s.xml' % count)
         tmp_txt = os.path.join(abs_path, 'logs', 'tmp', '%s.txt' % count)
         os.system('adb pull /data/local/tmp/current.xml %s' % tmp_xml)
-        os.system('adb push C:\Users\c_youwu\Desktop\UiTest\\tmp\\tmp.txt /data/local/tmp/Action.txt')
+        #os.system('adb push C:\Users\c_youwu\Desktop\UiTest\\tmp\\tmp.txt /data/local/tmp/Action.txt')
         #os.system('adb push %s /data/local/tmp/Action.txt' % tmp_txt)
     elif 'STATE:DumpException' in line:
         print '**************************************'

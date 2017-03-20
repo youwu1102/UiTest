@@ -4,7 +4,8 @@ from os.path import join
 
 class GlobalVariable(object):
 
-    working_directory = 'C:\\Git\\UiTest'
+    working_directory = 'C:\\cygwin64\\home\\c_youwu\\UiTest'
+    configs_directory = join(working_directory, 'configs')
 
     host_utils = join(working_directory, 'repository', 'HostUtils')
     target_utils = join(working_directory, 'repository', 'TargetUtils')
@@ -12,6 +13,10 @@ class GlobalVariable(object):
     adb_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     aapt_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     fastboot_exe = join(host_utils, 'sdk_tools', 'fastboot.exe')
+
+    class_name_mapping_id_configuration = join(configs_directory, 'class_name_mapping_id', 'config.xml')
+
+
 
     uiautomator_jar = 'C:\\Development\\Work\\wuyou_work1\\UiTest\\bin\\Demo.jar'
 
