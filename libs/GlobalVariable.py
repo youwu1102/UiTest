@@ -4,7 +4,9 @@ from os.path import join
 
 class GlobalVariable(object):
 
-    working_directory = 'C:\\cygwin64\\home\\c_youwu\\UiTest'
+    #working_directory = 'C:\\cygwin64\\home\\c_youwu\\UiTest'
+    working_directory = 'C:\\Users\\wuyou\\Desktop\\UiTest'
+
     configs_directory = join(working_directory, 'configs')
 
     host_utils = join(working_directory, 'repository', 'HostUtils')
