@@ -71,7 +71,7 @@ class Eigenvalue(object):
             Eigenvalue.insert_class_name_mapping_in_xml(GlobalVariable.class_name_mapping_id_configuration, class_name, class_id)
             Eigenvalue.dict_class_name_mapping_id = Eigenvalue.__get_dict_of_class_name_mapping_id(
                 GlobalVariable.class_name_mapping_id_configuration)
-        return '%04x' % int(class_id)
+        return '%03x' % int(class_id)
 
     @staticmethod
     def __open_dump(dump_path):
