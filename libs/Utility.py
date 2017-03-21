@@ -8,7 +8,7 @@ from ADB import Adb
 
 
 class Utility(object):
-    pid_expression = re.compile(r'\d+')
+    pid_expression = re.compile(r'\d{3,5} ')
     @staticmethod
     def run_command_on_pc(cmd, except_result='', except_true=True, need_output=False):
         """
@@ -81,7 +81,7 @@ class Utility(object):
         Print.info('I want to terminate the process \"%s\"' % process_name)
         pids = Utility.get_process_id_on_device(process_name=process_name, not_matching=not_matching)
         for pid in pids:
-            Utility.run_command_on_device(cmd='kill %s' % pid)
+            Utility.run_command_on_device(cmd='kill %s' % pid[:-1])
 
     @staticmethod
     def get_process_id_on_device(process_name, not_matching=''):
@@ -117,5 +117,5 @@ class Utility(object):
     @staticmethod
     def open_dump(dump_path):
         with open(dump_path, 'r') as dump:
-            tmp = dump.read()
-        return tmp
+            content = dump.read()
+        return content

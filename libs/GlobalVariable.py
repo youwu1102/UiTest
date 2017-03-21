@@ -4,8 +4,8 @@ from os.path import join
 
 class GlobalVariable(object):
 
-    #working_directory = 'C:\\cygwin64\\home\\c_youwu\\UiTest'
-    working_directory = 'C:\\Users\\wuyou\\Desktop\\UiTest'
+    working_directory = 'C:\\cygwin64\\home\\c_youwu\\UiTest'
+    # working_directory = 'C:\\Users\\wuyou\\Desktop\\UiTest'
 
     configs_directory = join(working_directory, 'configs')
 
@@ -15,6 +15,8 @@ class GlobalVariable(object):
     adb_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     aapt_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     fastboot_exe = join(host_utils, 'sdk_tools', 'fastboot.exe')
+
+    blank_action_file = join(target_utils, 'blank.txt')
 
     class_name_mapping_id_configuration = join(configs_directory, 'class_name_mapping_id', 'config.xml')
 
