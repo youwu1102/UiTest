@@ -20,16 +20,15 @@ class GlobalVariable(object):
 
     class_name_mapping_id_configuration = join(configs_directory, 'class_name_mapping_id', 'config.xml')
 
-
-
     uiautomator_jar = 'C:\\Development\\Work\\wuyou_work1\\UiTest\\bin\\Demo.jar'
 
     list_attrs = ['index', 'text', 'resource-id', 'package', 'content-desc', 'checkable', 'checked',
                   'clickable', 'enabled', 'focusable', 'focused', 'scrollable', 'long-clickable',
                   'password', 'selected', 'bounds', 'class']
 
-
     # ===============================================
+
+    dict_dump_actions = dict()
 
 if __name__ == '__main__':
     print GlobalVariable.host_utils

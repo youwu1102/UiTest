@@ -6,6 +6,9 @@ import re
 from time import sleep
 from ADB import Adb
 from Eigenvalue import Eigenvalue
+from xml.dom import minidom
+from Nodes import Nodes
+
 
 class Utility(object):
     pid_expression = re.compile(r'\d{3,5} ')
@@ -156,15 +159,13 @@ class Utility(object):
     def analysis_dump(dump_path):
         dump_content = Utility.open_dump(dump_path)
         eigenvalue = Eigenvalue.calculate_eigenvalue(dump_content)
-        if eigenvalue not in ApplicationClassification.dict_dump_actions.keys():
-            ApplicationClassification.dict_dump_actions[eigenvalue] = dump_path
-            nodes = ApplicationClassification.get_nodes_from_dump(dump_path)
-
-
+        if eigenvalue not in GlobalVariable.dict_dump_actions.keys():
+            GlobalVariable.dict_dump_actions[eigenvalue] = dump_path
+            nodes = Utility.get_nodes_from_dump(dump_path)
+            Utility.convert_nodes_to_actions(nodes=nodes)
         else:
-
             print dump_path
-            print 'is same as:'+ ApplicationClassification.dict_dump_actions.get(eigenvalue)
+            print 'is same as:'+GlobalVariable.dict_dump_actions.get(eigenvalue)
             print '==========================================================='
 
     @staticmethod
@@ -175,13 +176,19 @@ class Utility(object):
         nodes = root.getElementsByTagName('node')
         for node in nodes:
             dict_node = {}
-            for attr in ApplicationClassification.list_attrs:
+            for attr in GlobalVariable.list_attrs:
                 dict_node[attr] = node.getAttribute(attr)
             node_list.append(dict_node)
         return node_list
 
     @staticmethod
-    def convert_nodes_to_actions(nodes):
-        for node in nodes:
-            if node.get('checked') == 's':
-                pass
+    def convert_nodes_to_actions(dump_nodes):
+        Nodes.remove_useless_nodes(dump_nodes)
+
+
+if __name__ == '__main__':
+    nodes = Utility.get_nodes_from_dump('C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\com.android.contacts\\xml\\1.xml')
+    Utility.convert_nodes_to_actions(nodes)
+    print 'ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'
+    for node in nodes:
+        print node

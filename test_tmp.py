@@ -1,7 +1,7 @@
 __author__ = 'c_youwu'
 from libs.Utility import Utility
 from libs.GlobalVariable import GlobalVariable
-from libs.ApplicationClassification import ApplicationClassification
+from libs.TestMain import TestMain
 package_name = "com.android.contacts"
 Utility.stop_process_on_device(package_name)
 Utility.stop_process_on_device('uiautomator')
@@ -21,9 +21,10 @@ xml_store_path = Utility.make_dirs(os.path.join(log_path, 'xml'))
 
 for line in iter(a.stdout.readline, ''):
     if 'STATE:WAIT' in line:
+        Utility.output_msg('TestMain:Start %s ' % time.time())
         count += 1
         if not thread or not thread.is_alive():
-            thread = ApplicationClassification(log_path, os.path.join(xml_store_path, '%s.xml' % count))
+            thread = TestMain(log_path, os.path.join(xml_store_path, '%s.xml' % count))
             thread.start()
 
         # tmp_xml = os.path.join(abs_path, 'logs', 'tmp', '%s.xml' % count)
