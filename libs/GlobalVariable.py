@@ -8,7 +8,7 @@ class GlobalVariable(object):
     # working_directory = 'C:\\Users\\wuyou\\Desktop\\UiTest'
 
     configs_directory = join(working_directory, 'configs')
-
+    logs_directory = join(working_directory, 'logs')
     host_utils = join(working_directory, 'repository', 'HostUtils')
     target_utils = join(working_directory, 'repository', 'TargetUtils')
 
@@ -24,6 +24,12 @@ class GlobalVariable(object):
 
     uiautomator_jar = 'C:\\Development\\Work\\wuyou_work1\\UiTest\\bin\\Demo.jar'
 
+    list_attrs = ['index', 'text', 'resource-id', 'package', 'content-desc', 'checkable', 'checked',
+                  'clickable', 'enabled', 'focusable', 'focused', 'scrollable', 'long-clickable',
+                  'password', 'selected', 'bounds', 'class']
+
+
+    # ===============================================
 
 if __name__ == '__main__':
     print GlobalVariable.host_utils

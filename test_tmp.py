@@ -16,13 +16,15 @@ a = Popen('adb shell uiautomator runtest /data/local/tmp/Demo.jar -c Monday.afte
 Utility.run_command_on_device('am start %s' % package_name)
 thread = None
 count = 0
+log_path = Utility.make_dirs(os.path.join(GlobalVariable.logs_directory, package_name))
+xml_store_path = Utility.make_dirs(os.path.join(log_path, 'xml'))
+
 for line in iter(a.stdout.readline, ''):
     if 'STATE:WAIT' in line:
         count += 1
         if not thread or not thread.is_alive():
-            thread = ApplicationClassification()
+            thread = ApplicationClassification(log_path, os.path.join(xml_store_path, '%s.xml' % count))
             thread.start()
-        print time.time()
 
         # tmp_xml = os.path.join(abs_path, 'logs', 'tmp', '%s.xml' % count)
         # tmp_txt = os.path.join(abs_path, 'logs', 'tmp', '%s.txt' % count)

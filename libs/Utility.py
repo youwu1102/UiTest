@@ -5,10 +5,11 @@ import os
 import re
 from time import sleep
 from ADB import Adb
-
+from Eigenvalue import Eigenvalue
 
 class Utility(object):
     pid_expression = re.compile(r'\d{3,5} ')
+
     @staticmethod
     def run_command_on_pc(cmd, except_result='', except_true=True, need_output=False):
         """
@@ -113,9 +114,74 @@ class Utility(object):
         Utility.run_command_on_pc(cmd)
         sleep(1)
 
-
     @staticmethod
     def open_dump(dump_path):
         with open(dump_path, 'r') as dump:
             content = dump.read()
         return content
+
+    @staticmethod
+    def make_dirs(path):
+        if not os.path.exists(path):
+            os.makedirs(path)
+        return path
+
+    @staticmethod
+    def output_msg(msg, level='i'):
+        level = level.lower()
+        if level == 'i':
+            Print.info(msg)
+        elif level == 'e':
+            Print.error(msg)
+        elif level == 'r':
+            Print.result(msg)
+        elif level == 'w':
+            Print.warm(msg)
+        else:
+            Print.debug(msg)
+
+    @staticmethod
+    def pull_dump_file_to_pc(local):
+        Utility.run_command_on_pc(Adb.pull(remote='/data/local/tmp/current.xml', local=local))
+
+    @staticmethod
+    def push_action_file_to_device(local):
+        Utility.run_command_on_pc(Adb.push(local=local, remote='/data/local/tmp/Action.txt'))
+
+    @staticmethod
+    def write_action_file():
+        pass
+
+    @staticmethod
+    def analysis_dump(dump_path):
+        dump_content = Utility.open_dump(dump_path)
+        eigenvalue = Eigenvalue.calculate_eigenvalue(dump_content)
+        if eigenvalue not in ApplicationClassification.dict_dump_actions.keys():
+            ApplicationClassification.dict_dump_actions[eigenvalue] = dump_path
+            nodes = ApplicationClassification.get_nodes_from_dump(dump_path)
+
+
+        else:
+
+            print dump_path
+            print 'is same as:'+ ApplicationClassification.dict_dump_actions.get(eigenvalue)
+            print '==========================================================='
+
+    @staticmethod
+    def get_nodes_from_dump(dump_path):
+        node_list = []
+        dom = minidom.parse(dump_path)
+        root = dom.documentElement
+        nodes = root.getElementsByTagName('node')
+        for node in nodes:
+            dict_node = {}
+            for attr in ApplicationClassification.list_attrs:
+                dict_node[attr] = node.getAttribute(attr)
+            node_list.append(dict_node)
+        return node_list
+
+    @staticmethod
+    def convert_nodes_to_actions(nodes):
+        for node in nodes:
+            if node.get('checked') == 's':
+                pass
