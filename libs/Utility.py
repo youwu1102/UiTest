@@ -162,11 +162,11 @@ class Utility(object):
         if eigenvalue not in GlobalVariable.dict_dump_actions.keys():
             GlobalVariable.dict_dump_actions[eigenvalue] = dump_path
             nodes = Utility.get_nodes_from_dump(dump_path)
-            Utility.convert_nodes_to_actions(nodes=nodes)
+            actions = Utility.convert_nodes_to_actions(nodes=nodes)
+            GlobalVariable.dict_dump_actions[eigenvalue]  = actions
         else:
-            print dump_path
-            print 'is same as:'+GlobalVariable.dict_dump_actions.get(eigenvalue)
-            print '==========================================================='
+            actions = GlobalVariable.dict_dump_actions.get(eigenvalue)
+        return eigenvalue, actions
 
     @staticmethod
     def get_nodes_from_dump(dump_path):
@@ -184,7 +184,7 @@ class Utility(object):
     @staticmethod
     def convert_nodes_to_actions(dump_nodes):
         Nodes.remove_useless_nodes(dump_nodes)
-
+        return Nodes.convert_to_actions(dump_nodes)
 
 if __name__ == '__main__':
     nodes = Utility.get_nodes_from_dump('C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\com.android.contacts\\xml\\1.xml')
