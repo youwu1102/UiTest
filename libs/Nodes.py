@@ -19,6 +19,7 @@ class Nodes(object):
 
     @staticmethod
     def convert_to_actions(nodes):
+        actions = []
         tmp_nodes = nodes[:]
         for node in tmp_nodes:
             clickable = node.get('clickable')
@@ -31,5 +32,5 @@ class Nodes(object):
                 action_string = ',\t'.join(action_list)
                 action = '%04d,\t' % (6+len(action_string)) + action_string
                 nodes.remove(node)
-
-        return []
+                actions.append([action])
+        return actions

@@ -158,6 +158,8 @@ public class morning extends UiAutomatorTestCase{
 			try {
 				check_code = Integer.parseInt(string_list[0]);
 				if (check_code != action.length()) {
+					System.out.println(check_code);
+					System.out.println(action.length());
 					return false;
 				}
 			} catch (java.lang.NumberFormatException e) {

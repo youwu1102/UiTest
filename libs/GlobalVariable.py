@@ -20,7 +20,7 @@ class GlobalVariable(object):
 
     class_name_mapping_id_configuration = join(configs_directory, 'class_name_mapping_id', 'config.xml')
 
-    uiautomator_jar = 'C:\\Development\\Work\\wuyou_work1\\UiTest\\bin\\Demo.jar'
+    uiautomator_jar = 'C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\UiAutomatorCode\\UiTest\\bin\\Demo.jar'
 
     list_attrs = ['index', 'text', 'resource-id', 'package', 'content-desc', 'checkable', 'checked',
                   'clickable', 'enabled', 'focusable', 'focused', 'scrollable', 'long-clickable',

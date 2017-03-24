@@ -16,7 +16,21 @@ class TestMain(threading.Thread):
         thread_push_blank_file.start()
         Utility.pull_dump_file_to_pc(local=self.xml_store_path)
         Utility.output_msg('I pulled dump file to pc and I will start parse dump file')
-        Utility.analysis_dump(self.xml_store_path)
+        eigenvalue = Utility.analysis_dump(self.xml_store_path)
+        actions = GlobalVariable.dict_dump_actions.get(eigenvalue)
+        if len(actions) > 0:
+            steps = actions[0]
+            del actions[0]
+            with open('tmp.txt', 'w') as action_file:
+                for step in steps:
+                    print step.encode('utf-8')
+                    action_file.write(step.encode('utf-8') + '\n')
+        else:
+            step = '%04d,\t' % (6+len('BACK')) + 'BACK' + '\n'
+            with open('tmp.txt', 'w') as action_file:
+                action_file.write(step)
+                action_file.close()
+        Utility.run_command_on_pc('adb push tmp.txt /data/local/tmp/Action.txt')
         Utility.output_msg('TestMain:Done %s ' % time.time())
 
 

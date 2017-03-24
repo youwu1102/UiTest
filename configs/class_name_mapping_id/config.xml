@@ -17,4 +17,7 @@
 	<class id="14" name="android.widget.ListView" />
 	<class id="15" name="com.android.launcher3.Workspace" />
 	<class id="16" name="android.support.v7.widget.RecyclerView" />
+	<class id="17" name="android.widget.CheckBox" />
+	<class id="18" name="android.widget.RadioButton" />
+	<class id="19" name="android.support.v4.widget.DrawerLayout" />
 	</root>

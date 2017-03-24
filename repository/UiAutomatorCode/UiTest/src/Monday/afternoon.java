@@ -32,7 +32,7 @@ public class afternoon extends UiAutomatorTestCase {
 				System.out.println("STATE:DumpException");
 			}
 			System.out.println("STATE:WAIT");
-			sleep(1000);
+			sleep(2000);
 			ArrayList<String> actions = morning
 					.getActions("/data/local/tmp/Action.txt");
 			if (actions.size() == 0) {
