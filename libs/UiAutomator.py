@@ -2,7 +2,9 @@
 from uiautomator import Device
 from uiautomator import AutomatorDeviceObject
 from uiautomator import JsonRPCError
+from uiautomator import Selector
 
+# http://xiaocong.github.io/slides/android-uiautomator-and-python/#/first-usage
 class UiAutomator(AutomatorDeviceObject):
     def __init__(self, serial=None):
         self.device = Device(serial)
@@ -25,18 +27,11 @@ class UiAutomator(AutomatorDeviceObject):
         except JsonRPCError, e:
             return e
 
-    def scroll(self, **kwargs):
-        self.device(**kwargs).scroll.horiz.forward(steps=50) # default vertically and forward
-        # d().scroll.horiz.forward(steps=100)
-        # d().scroll.vert.backward(steps=100)
-        # d().scroll.horiz.toBeginning(steps=100, max_swipes=100)
-        # d().scroll.vert.toEnd(steps=100)
-        # d().scroll.horiz.to(text="Clock")
+    def scroll(self,vertical,forward,steps=100,**kwargs):
+        return self.device(**kwargs).scroll()
 
 if __name__ == '__main__':
     ui = UiAutomator()
     import time
     print time.time()
-    ui.dump('aaa.xml')
-    print time.time()
-    print ui.scroll(resourceId="com.android.launcher3:id/apps_list_view")
+    ui.scroll(vertical=True,forward=True,text='sss')
