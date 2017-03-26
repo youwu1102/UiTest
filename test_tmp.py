@@ -12,33 +12,12 @@ import os
 from subprocess import Popen
 from subprocess import PIPE
 abs_path = GlobalVariable.working_directory
-a = Popen('adb shell uiautomator runtest /data/local/tmp/Demo.jar -c Monday.afternoon#test3rd_App', stdout=PIPE, stderr=PIPE, shell=True)
-Utility.run_command_on_device('am start %s' % package_name)
+
 thread = None
 count = 0
 log_path = Utility.make_dirs(os.path.join(GlobalVariable.logs_directory, package_name))
 xml_store_path = Utility.make_dirs(os.path.join(log_path, 'xml'))
 
-for line in iter(a.stdout.readline, ''):
-    if 'STATE:WAIT' in line:
-        Utility.output_msg('TestMain:Start %s ' % time.time())
-        count += 1
-        if not thread or not thread.is_alive():
-            thread = TestMain(log_path, os.path.join(xml_store_path, '%s.xml' % count))
-            thread.start()
 
-        # tmp_xml = os.path.join(abs_path, 'logs', 'tmp', '%s.xml' % count)
-        # tmp_txt = os.path.join(abs_path, 'logs', 'tmp', '%s.txt' % count)
-        # os.system('adb pull /data/local/tmp/current.xml %s' % tmp_xml)
-        # ApplicationClassification.analysis_dump(tmp_xml)
-        #os.system('adb push C:\Users\c_youwu\Desktop\UiTest\\tmp\\tmp.txt /data/local/tmp/Action.txt')
-        #os.system('adb push %s /data/local/tmp/Action.txt' % tmp_txt)
-    elif 'STATE:' in line:
-        print line
-    # elif 'STATE:UiObjectNotFoundException' in line:
-    #     print '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&'
-    # else:
-    #     pass
-    # if count % 10 ==0:
-    #     pass
+
 

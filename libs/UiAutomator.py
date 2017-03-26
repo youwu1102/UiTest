@@ -2,7 +2,7 @@
 from uiautomator import Device
 from uiautomator import AutomatorDeviceObject
 from uiautomator import JsonRPCError
-from uiautomator import Selector
+
 
 # http://xiaocong.github.io/slides/android-uiautomator-and-python/#/first-usage
 class UiAutomator(AutomatorDeviceObject):
@@ -10,7 +10,7 @@ class UiAutomator(AutomatorDeviceObject):
         self.device = Device(serial)
 
     def info(self):
-        return self.device.info()
+        return self.device.info
 
     def dump(self, filename=None, compressed=True, pretty=True):
         return self.device.dump(filename=filename, compressed=compressed, pretty=pretty)
@@ -27,11 +27,20 @@ class UiAutomator(AutomatorDeviceObject):
         except JsonRPCError, e:
             return e
 
-    def scroll(self,vertical,forward,steps=100,**kwargs):
-        return self.device(**kwargs).scroll()
+    def scroll(self, vertical, forward, steps=100, **kwargs):
+        print vertical
+        print forward
+        print kwargs
+        return self.device(**kwargs).scroll(steps=steps)
+
+
 
 if __name__ == '__main__':
-    ui = UiAutomator()
+    ui = UiAutomator('82a3bb73')
+    print ui.info().get('currentPackageName')
+    print 's'
+    ui.dump('tmp.xml')
     import time
     print time.time()
-    ui.scroll(vertical=True,forward=True,text='sss')
+    #ui.scroll(vertical=True, forward=True,text='s')
+    print ui.click(text='hid')

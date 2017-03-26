@@ -1,14 +1,10 @@
-__author__ = 'c_youwu'
 from Utility import Utility
-import threading
 from GlobalVariable import GlobalVariable
 import time
 
-class TestMain(threading.Thread):
+class TestMain(object):
     def __init__(self, log_path, xml_store_path):
         self.log_path = log_path
-        self.xml_store_path = xml_store_path
-        threading.Thread.__init__(self)
 
     def run(self):
         thread_push_blank_file = threading.Thread(target=Utility.push_action_file_to_device,
