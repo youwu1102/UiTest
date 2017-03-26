@@ -16,12 +16,7 @@ class GlobalVariable(object):
     aapt_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     fastboot_exe = join(host_utils, 'sdk_tools', 'fastboot.exe')
 
-    blank_action_file = join(target_utils, 'blank.txt')
-
     class_name_mapping_id_configuration = join(configs_directory, 'class_name_mapping_id', 'config.xml')
-
-    uiautomator_jar = 'C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\UiAutomatorCode\\UiTest\\bin\\Demo.jar'
-
     list_attrs = ['index', 'text', 'resource-id', 'package', 'content-desc', 'checkable', 'checked',
                   'clickable', 'enabled', 'focusable', 'focused', 'scrollable', 'long-clickable',
                   'password', 'selected', 'bounds', 'class']

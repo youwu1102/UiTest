@@ -7,10 +7,7 @@ Utility.stop_process_on_device(package_name)
 Utility.stop_process_on_device('uiautomator')
 Utility.push_file_to_device(local=GlobalVariable.uiautomator_jar, remote='/data/local/tmp/')
 Utility.run_command_on_pc('adb root')
-import time
 import os
-from subprocess import Popen
-from subprocess import PIPE
 abs_path = GlobalVariable.working_directory
 
 thread = None

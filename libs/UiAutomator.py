@@ -5,7 +5,7 @@ from uiautomator import JsonRPCError
 
 
 # http://xiaocong.github.io/slides/android-uiautomator-and-python/#/first-usage
-class UiAutomator(AutomatorDeviceObject):
+class UiAutomator(object):
     def __init__(self, serial=None):
         self.device = Device(serial)
 
@@ -33,14 +33,9 @@ class UiAutomator(AutomatorDeviceObject):
         print kwargs
         return self.device(**kwargs).scroll(steps=steps)
 
-
+    def get_current_package_name(self):
+        return self.device.info.get('currentPackageName')
 
 if __name__ == '__main__':
     ui = UiAutomator('82a3bb73')
-    print ui.info().get('currentPackageName')
-    print 's'
-    ui.dump('tmp.xml')
-    import time
-    print time.time()
-    #ui.scroll(vertical=True, forward=True,text='s')
-    print ui.click(text='hid')
+
