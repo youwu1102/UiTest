@@ -4,8 +4,8 @@ from DebugMain import Debug
 
 
 class TestMain(Debug):
-    def __init__(self, package_name, serial=None):
-        Debug.__init__(self,package_name=package_name, serial=serial)
+    def __init__(self, project, package_name, serial=None):
+        Debug.__init__(self, project=project, package_name=package_name, serial=serial)
 
 
 

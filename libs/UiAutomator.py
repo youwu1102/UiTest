@@ -15,6 +15,9 @@ class UiAutomator(object):
     def dump(self, filename=None, compressed=True, pretty=True):
         return self.device.dump(filename=filename, compressed=compressed, pretty=pretty)
 
+    def screenshot(self, filename, scale=1.0, quality=100):
+        return self.device.screenshot(filename=filename, scale=scale, quality=quality)
+
     def click(self, **kwargs):
         try:
             return self.device(**kwargs).click()

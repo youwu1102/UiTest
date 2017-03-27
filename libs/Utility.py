@@ -8,6 +8,7 @@ from ADB import Adb
 from Eigenvalue import Eigenvalue
 from xml.dom import minidom
 from Nodes import Nodes
+from TimeFormat import TimeFormat
 
 
 class Utility(object):
@@ -86,6 +87,11 @@ class Utility(object):
         pids = Utility.get_process_id_on_device(process_name=process_name, not_matching=not_matching)
         for pid in pids:
             Utility.run_command_on_device(cmd='kill %s' % pid[:-1])
+
+    @staticmethod
+    def start_process_on_device(process_name):
+        Print.info('I want to start the process \"%s\"' % process_name)
+        Utility.run_command_on_device(cmd='am start %s' % process_name)
 
     @staticmethod
     def get_process_id_on_device(process_name, not_matching=''):
@@ -183,6 +189,22 @@ class Utility(object):
     def convert_nodes_to_actions(dump_nodes):
         Nodes.remove_useless_nodes(dump_nodes)
         return Nodes.convert_to_actions(dump_nodes)
+
+    @staticmethod
+    def get_timestamp():
+        return TimeFormat.timestamp()
+
+    @staticmethod
+    def wait_for_time(seconds):
+        Print.info('I wait for %s seconds' % seconds)
+        sleep(seconds)
+
+    @staticmethod
+    def restart_process_on_devices(package_name):
+        Utility.stop_process_on_device(package_name)
+        Utility.wait_for_time(1)
+        Utility.start_process_on_device(package_name)
+        Utility.wait_for_time(1)
 
 if __name__ == '__main__':
     nodes = Utility.get_nodes_from_dump('C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\com.android.contacts\\xml\\1.xml')

@@ -4,7 +4,7 @@ import traceback
 
 
 class Print(object):
-    LogPath = 'C:\\Git\\UiTest\\logs\\UiTest.log'
+    LogPath = 'UiTest.log'
 
     @staticmethod
     def info(msg):

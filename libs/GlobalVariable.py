@@ -11,6 +11,10 @@ class GlobalVariable(object):
     logs_directory = join(working_directory, 'logs')
     host_utils = join(working_directory, 'repository', 'HostUtils')
     target_utils = join(working_directory, 'repository', 'TargetUtils')
+    case_utils = join(working_directory, 'repository', 'CaseUtils')
+
+    current_case_directory = ''
+    current_log_directory = ''
 
     adb_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     aapt_exe = join(host_utils, 'sdk_tools', 'adb.exe')

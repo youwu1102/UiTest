@@ -4,23 +4,37 @@ from Utility import Utility
 from GlobalVariable import GlobalVariable
 from os.path import join
 
+
 class Debug(object):
-    def __init__(self, package_name, serial=None):
+    def __init__(self, project, package_name, serial=None):
+        self.project = project
         self.package_name = package_name
         self.device = UiAutomator(serial)
-        self.logs_directory = Utility.make_dirs(join(GlobalVariable.logs_directory, package_name))
-        self.
+        self.log_directory = Utility.make_dirs(join(GlobalVariable.logs_directory, Utility.get_timestamp(), package_name))
+        self.case_directory = Utility.make_dirs(join(GlobalVariable.case_utils, project, package_name))
+        self.current_dump = ''
+        self.current_dump_screenshot = ''
 
     def main(self):
-        print self.device.get_current_package_name()
+        self.initialization()
+        count = 0
+        while True:
+            count += 1
+            self.set_current_dump_path(dump_name=count)
+            self.device.dump(self.current_dump)
+            self.device.screenshot(self.current_dump_screenshot)
+            print count
+
+    def set_current_dump_path(self, dump_name):
+        self.current_dump = join(self.log_directory, '%s.uix' % dump_name)
+        self.current_dump_screenshot = join(self.log_directory, '%s.png' % dump_name)
 
 
-
-
-
-
+    def initialization(self):
+        Utility.restart_process_on_devices(self.package_name)
 
 
 if __name__ == '__main__':
-    d = Debug(package_name='ss')
+    package_name = "com.android.contacts"
+    d = Debug(project='SDM660', package_name=package_name)
     d.main()

@@ -2,6 +2,8 @@ __author__ = 'c_youwu'
 from libs.Utility import Utility
 from libs.GlobalVariable import GlobalVariable
 from libs.TestMain import TestMain
+
+from libs.PrintInfo import Print
 package_name = "com.android.contacts"
 Utility.stop_process_on_device(package_name)
 Utility.stop_process_on_device('uiautomator')
