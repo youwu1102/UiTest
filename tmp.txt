@@ -1,1 +1,0 @@
-0091,	CLICK,	,	Email address,	com.android.email:id/account_email,	,	android.widget.EditText
