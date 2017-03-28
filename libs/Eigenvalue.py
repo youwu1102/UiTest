@@ -8,19 +8,49 @@ class Eigenvalue(object):
     dict_class_name_mapping_id = dict()
 
     @staticmethod
-    def get_dict_of_letter_mapping_id(upper=True):
+    def __get_dict_of_number_map_letter(upper=True):
         count = 0
         dict_tmp = dict()
         letter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         if not upper:
             letter = letter.lower()
         for s in letter:
-            dict_tmp[str(count)]=s
+            dict_tmp[count]=s
             count += 1
         return dict_tmp
 
-    dict_upper_letter = get_dict_of_letter_mapping_id.__func__(upper=True)
-    dict_lower_letter = get_dict_of_letter_mapping_id.__func__(upper=False)
+    dict_number_map_upper_letter = __get_dict_of_number_map_letter.__func__(upper=True)
+    #dict_number_map_lower_letter = __get_dict_of_number_map_letter.__func__(upper=False)
+
+    @staticmethod
+    def __get_dict_of_letter_map_number(upper=True):
+        count = 0
+        dict_tmp = dict()
+        letter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        if not upper:
+            letter = letter.lower()
+        for s in letter:
+            dict_tmp[s] = count
+            count += 1
+        return dict_tmp
+
+    #dict_upper_letter_map_number = __get_dict_of_letter_map_number.__func__(upper=True)
+    dict_lower_letter_map_number = __get_dict_of_letter_map_number.__func__(upper=False)
+
+    @staticmethod
+    def convert_26_to_10(x):
+        x = x.lower()
+        x1 = Eigenvalue.dict_lower_letter_map_number.get(x[0])
+        x2 = Eigenvalue.dict_lower_letter_map_number.get(x[1])
+        return x1 * 26 + x2
+
+    @staticmethod
+    def convert_10_to_26(x):
+        x = int(x)
+        x1 = x / 26
+        x2 = x % 26
+        return Eigenvalue.dict_number_map_upper_letter.get(x1) + Eigenvalue.dict_number_map_upper_letter.get(x2)
+
 
     @staticmethod
     def __get_dict_of_class_name_mapping_id(xml_path):
@@ -80,5 +110,8 @@ class Eigenvalue(object):
         return '%03x' % int(class_id)
 
 if __name__ == '__main__':
-    print Eigenvalue.dict_lower_letter
-    print Eigenvalue.dict_upper_letter
+
+    print Eigenvalue.dict_lower_letter_map_number
+
+    print Eigenvalue.convert_26_to_10('dd')
+    print Eigenvalue.convert_10_to_26(81)
