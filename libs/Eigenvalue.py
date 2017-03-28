@@ -8,6 +8,21 @@ class Eigenvalue(object):
     dict_class_name_mapping_id = dict()
 
     @staticmethod
+    def get_dict_of_letter_mapping_id(upper=True):
+        count = 0
+        dict_tmp = dict()
+        letter = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        if not upper:
+            letter = letter.lower()
+        for s in letter:
+            dict_tmp[str(count)]=s
+            count += 1
+        return dict_tmp
+
+    dict_upper_letter = get_dict_of_letter_mapping_id.__func__(upper=True)
+    dict_lower_letter = get_dict_of_letter_mapping_id.__func__(upper=False)
+
+    @staticmethod
     def __get_dict_of_class_name_mapping_id(xml_path):
         tmp_dict = dict()
         tree = ElementTree()
@@ -22,7 +37,7 @@ class Eigenvalue(object):
         tree = ElementTree()
         tree.parse(xml_path)
         root = tree.getroot()
-        element = Element('class', {'name': class_name, 'id': '%s' % class_id})
+        element = Element('class', {'name': class_name, 'id': class_id, 'code': '' })
         element.tail = '\n\t'
         root.append(element)
         tree.write(xml_path, encoding="utf-8", xml_declaration=True)
@@ -50,8 +65,8 @@ class Eigenvalue(object):
         for re_result in pattern.finditer(content):
             class_name = re_result.group().replace('class="', '')[:-1]
             sequence += Eigenvalue.__get_id_of_class_name(class_name=class_name)
-        if len(sequence) > 60:
-            return sequence[:60]
+        # if len(sequence) > 60:
+        #     return sequence[:60]
         return sequence
 
     @staticmethod
@@ -65,19 +80,5 @@ class Eigenvalue(object):
         return '%03x' % int(class_id)
 
 if __name__ == '__main__':
-    pass
-    # import time
-    # start = time.time()
-    # import os
-    # p = 'C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\tmp'
-    # for f in os.listdir(p):
-    #     print Eigenvalue.calculate_eigenvalue(os.path.join(p, f))
-    # print time.time()-start
-    # dict_class_name_mapping = Eigenvalue.get_dict_of_class_name_mapping(GlobalVariable.class_name_mapping_id_configuration)
-    # if class_name not in dict_class_name_mapping.keys():
-    #     Eigenvalue.insert_class_name_mapping_in_xml(GlobalVariable.class_name_mapping_id_configuration, class_name, len(dict_class_name_mapping.keys()))
-    # import os
-    # p = "C:\\Users\\wuyou\\Desktop\\UiTest\\logs\\tmp"
-    # d1= os.path.join(p,'dump_1035839587978767125.uix')
-    # d2= os.path.join(p,'dump_5694674565452784425.uix')
-    # Eigenvalue.compare_dump(d1,d2)
+    print Eigenvalue.dict_lower_letter
+    print Eigenvalue.dict_upper_letter

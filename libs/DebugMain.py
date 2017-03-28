@@ -3,6 +3,7 @@ from UiAutomator import UiAutomator
 from Utility import Utility
 from GlobalVariable import GlobalVariable
 from os.path import join
+from Eigenvalue import Eigenvalue
 
 
 class Debug(object):
@@ -23,12 +24,11 @@ class Debug(object):
             self.set_current_dump_path(dump_name=count)
             self.device.dump(self.current_dump)
             self.device.screenshot(self.current_dump_screenshot)
-            print count
+            print Eigenvalue.calculate_eigenvalue(Utility.open_dump(self.current_dump))
 
     def set_current_dump_path(self, dump_name):
         self.current_dump = join(self.log_directory, '%s.uix' % dump_name)
         self.current_dump_screenshot = join(self.log_directory, '%s.png' % dump_name)
-
 
     def initialization(self):
         Utility.restart_process_on_devices(self.package_name)

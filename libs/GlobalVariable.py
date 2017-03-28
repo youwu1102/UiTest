@@ -1,9 +1,7 @@
 # -*- encoding:UTF-8 -*-
 from os.path import join
 
-
 class GlobalVariable(object):
-
     working_directory = 'C:\\cygwin64\\home\\c_youwu\\UiTest'
     # working_directory = 'C:\\Users\\wuyou\\Desktop\\UiTest'
 

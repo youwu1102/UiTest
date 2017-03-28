@@ -40,5 +40,6 @@ class UiAutomator(object):
         return self.device.info.get('currentPackageName')
 
 if __name__ == '__main__':
-    ui = UiAutomator('82a3bb73')
+    ui = UiAutomator('ce58ac0d')
+    print ui.click(resourceId='com.android.contacts:id/user_profile_button')
 
