@@ -1,23 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <root>
-    <class id="0" name="android.widget.FrameLayout" />
-	<class id="1" name="android.widget.LinearLayout" />
-	<class id="2" name="android.widget.RelativeLayout" />
-	<class id="3" name="android.view.ViewGroup" />
-	<class id="4" name="android.widget.TextView" />
-	<class id="5" name="android.widget.HorizontalScrollView" />
-	<class id="6" name="android.widget.ScrollView" />
-	<class id="7" name="android.widget.ImageView" />
-	<class id="8" name="android.widget.Button" />
-	<class id="9" name="android.widget.ImageButton" />
-	<class id="10" name="android.view.View" />
-	<class id="11" name="android.widget.EditText" />
-	<class id="12" name="android.widget.Spinner" />
-	<class id="13" name="android.support.v4.view.ViewPager" />
-	<class id="14" name="android.widget.ListView" />
-	<class id="15" name="com.android.launcher3.Workspace" />
-	<class id="16" name="android.support.v7.widget.RecyclerView" />
-	<class id="17" name="android.widget.CheckBox" />
-	<class id="18" name="android.widget.RadioButton" />
-	<class id="19" name="android.support.v4.widget.DrawerLayout" />
+	<class id="0" name="android.widget.FrameLayout" type="common" />
+	<class id="1" name="android.widget.TextView" type="common" />
+	<class id="2" name="android.widget.ImageButton" type="common" />
+	<class id="3" name="android.widget.HorizontalScrollView" type="list" />
+	<class id="4" name="android.support.v4.view.ViewPager" type="common" />
+	<class id="5" name="android.widget.ListView" type="list" />
+	<class id="6" name="android.widget.Button" type="common" />
+	<class id="7" name="android.view.ViewGroup" type="common" />
 	</root>

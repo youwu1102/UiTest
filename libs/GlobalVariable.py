@@ -18,7 +18,7 @@ class GlobalVariable(object):
     aapt_exe = join(host_utils, 'sdk_tools', 'adb.exe')
     fastboot_exe = join(host_utils, 'sdk_tools', 'fastboot.exe')
 
-    class_name_mapping_id_configuration = join(configs_directory, 'class_name_mapping_id', 'config.xml')
+    class_name_mapping_configuration = join(configs_directory, 'class_name_mapping_id', 'config.xml')
     list_attrs = ['index', 'text', 'resource-id', 'package', 'content-desc', 'checkable', 'checked',
                   'clickable', 'enabled', 'focusable', 'focused', 'scrollable', 'long-clickable',
                   'password', 'selected', 'bounds', 'class']
