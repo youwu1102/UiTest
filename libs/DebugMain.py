@@ -3,7 +3,7 @@ from UiAutomator import UiAutomator
 from Utility import Utility
 from GlobalVariable import GlobalVariable
 from os.path import join
-from Eigenvalue import Eigenvalue
+
 
 
 class Debug(object):
@@ -21,12 +21,20 @@ class Debug(object):
         count = 0
         while True:
             count += 1
-            self.set_current_dump_path(dump_name=count)
+            self.__set_current_dump_path(dump_name=count)
             self.device.dump(self.current_dump)
             self.device.screenshot(self.current_dump_screenshot)
-            print Eigenvalue.calculate_eigenvalue(Utility.open_dump(self.current_dump))
+            eigenvalue = Utility.analysis_dump(self.current_dump)
+            actions = GlobalVariable.dict_dump_actions.get(eigenvalue)
+            if len(actions) > 0:
+                print actions
+                GlobalVariable.dict_dump_actions[eigenvalue] = []
+            else:
+                self.device.press_back()
 
-    def set_current_dump_path(self, dump_name):
+
+
+    def __set_current_dump_path(self, dump_name):
         self.current_dump = join(self.log_directory, '%s.uix' % dump_name)
         self.current_dump_screenshot = join(self.log_directory, '%s.png' % dump_name)
 

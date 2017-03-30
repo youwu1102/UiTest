@@ -59,10 +59,6 @@ class Eigenvalue(object):
         x2 = x % 26
         return Eigenvalue.dict_number_letter.get(x1) + Eigenvalue.dict_number_letter.get(x2)
 
-
-
-
-
     @staticmethod
     def insert_class_name_mapping_in_xml(xml_path, class_name, class_id):
         tree = ElementTree()

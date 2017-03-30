@@ -8,4 +8,10 @@
 	<class id="5" name="android.widget.ListView" type="list" />
 	<class id="6" name="android.widget.Button" type="common" />
 	<class id="7" name="android.view.ViewGroup" type="common" />
+	<class id="8" name="android.widget.ScrollView" type="common" />
+	<class id="9" name="android.view.View" type="common" />
+	<class id="10" name="android.widget.LinearLayout" type="common" />
+	<class id="11" name="android.widget.ImageView" type="common" />
+	<class id="12" name="android.widget.EditText" type="common" />
+	<class id="13" name="android.widget.Spinner" type="common" />
 	</root>

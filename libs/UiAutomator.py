@@ -39,6 +39,35 @@ class UiAutomator(object):
     def get_current_package_name(self):
         return self.device.info.get('currentPackageName')
 
+
+        # press key via name or key code. Supported key name includes:
+        # home, back, left, right, up, down, center, menu, search, enter,
+        # delete(or del), recent(recent apps), volume_up, volume_down,
+        # volume_mute, camera, power.
+        # Usage:
+        # d.press.back()  # press back key
+        # d.press.menu()  # press home key
+        # d.press(89)     # press keycode
+        #
+        #     key=["home", "back", "left", "right", "up", "down", "center",
+        #          "menu", "search", "enter", "delete", "del", "recent",
+        #          "volume_up", "volume_down", "volume_mute", "camera", "power"]
+
+    def press_home(self):
+        return self.device.press.home()
+
+    def press_back(self):
+        return self.device.press.back()
+
+    def press_menu(self):
+        return self.device.press.menu()
+
+    def press_recent(self):
+        return self.device.press.recent()
+
+    def press_keycode(self, keycode):
+        return self.device.press(keycode)
+
 if __name__ == '__main__':
     ui = UiAutomator('ce58ac0d')
     print ui.click(resourceId='com.android.contacts:id/user_profile_button')

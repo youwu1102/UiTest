@@ -163,17 +163,18 @@ class Utility(object):
 
     @staticmethod
     def analysis_dump(dump_path):
-        dump_content = Utility.open_dump(dump_path)
-        eigenvalue = Eigenvalue.calculate_eigenvalue(dump_content)
-        if eigenvalue not in GlobalVariable.dict_dump_actions.keys():
-            GlobalVariable.dict_dump_actions[eigenvalue] = dump_path
-            nodes = Utility.get_nodes_from_dump(dump_path)
-            actions = Utility.convert_nodes_to_actions(nodes)
+        eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path)
+        if True:
+        #if eigenvalue not in GlobalVariable.dict_dump_actions.keys():
+            nodes = Utility.__get_nodes_from_dump(dump_path)
+            print nodes
+            actions = Utility.__convert_nodes_to_actions(nodes)
+            print actions
             GlobalVariable.dict_dump_actions[eigenvalue] = actions
         return eigenvalue
 
     @staticmethod
-    def get_nodes_from_dump(dump_path):
+    def __get_nodes_from_dump(dump_path):
         node_list = []
         dom = minidom.parse(dump_path)
         root = dom.documentElement
@@ -186,7 +187,7 @@ class Utility(object):
         return node_list
 
     @staticmethod
-    def convert_nodes_to_actions(dump_nodes):
+    def __convert_nodes_to_actions(dump_nodes):
         Nodes.remove_useless_nodes(dump_nodes)
         return Nodes.convert_to_actions(dump_nodes)
 
@@ -207,5 +208,6 @@ class Utility(object):
         Utility.wait_for_time(1)
 
 if __name__ == '__main__':
-    nodes = Utility.get_nodes_from_dump('C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\com.android.contacts\\xml\\1.xml')
-    print Utility.convert_nodes_to_actions(nodes)
+    for x in range(10000):
+        aaa = Utility.analysis_dump('C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\2017_03_27-16_31_38\\com.android.contacts\\2.uix')
+
