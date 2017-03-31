@@ -58,17 +58,19 @@ class Debug(object):
         self.__set_current_dump_path()
         if parent == 'Root':
             parent = self.case_doc.createElement("Root")
-            self.case_doc.appendChild(parent)
         self.device.dump(self.current_dump)
         self.device.screenshot(self.current_dump_screenshot)
         eigenvalue = Utility.analysis_dump(self.current_dump)
         actions = GlobalVariable.dict_dump_actions.get(eigenvalue)
         for action in actions:
-            print action
+            node = self.case_doc.createElement('Node')
+            for key in action.keys():
+                node.setAttribute(key,action.get(key))
+            parent.appendChild(node)
+        self.case_doc.appendChild(parent)
         f = open(self.case_xml, "w")
         f.write(self.case_doc.toprettyxml(indent="  "))
         f.close()
-
 
 
 

@@ -167,9 +167,7 @@ class Utility(object):
         if True:
         #if eigenvalue not in GlobalVariable.dict_dump_actions.keys():
             nodes = Utility.__get_nodes_from_dump(dump_path)
-            print nodes
-            actions = Utility.__convert_nodes_to_actions(nodes)
-            print actions
+            actions = Utility.__category_nodes(nodes)
             GlobalVariable.dict_dump_actions[eigenvalue] = actions
         return eigenvalue
 
@@ -187,9 +185,9 @@ class Utility(object):
         return node_list
 
     @staticmethod
-    def __convert_nodes_to_actions(dump_nodes):
+    def __category_nodes(dump_nodes):  # 分类节点，将有用的留下 删除没用的
         Nodes.remove_useless_nodes(dump_nodes)
-        return Nodes.convert_to_actions(dump_nodes)
+        return dump_nodes
 
     @staticmethod
     def get_timestamp():
