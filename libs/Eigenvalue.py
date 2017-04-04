@@ -122,6 +122,7 @@ class Eigenvalue(object):
         elif class_type == 'list':
             return class_id.upper()
 
+
 if __name__ == '__main__':
     print Eigenvalue.dict_class_name_mapping
     print Eigenvalue.calculate_eigenvalue('C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\2017_03_27-16_31_38\\com.android.contacts\\2.uix')

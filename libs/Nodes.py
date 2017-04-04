@@ -1,9 +1,10 @@
+# -*- encoding:UTF-8 -*-
 __author__ = 'c_youwu'
 
 
 class Nodes(object):
     @staticmethod
-    def remove_useless_nodes(nodes):   # 留下有用的NODE 并且讲操作写进去
+    def remove_useless_nodes(nodes):   # 留下有用的NODE 并且将操作写进去
         tmp_nodes = nodes[:]
         for node in tmp_nodes:
             if Nodes.__node_useless_rule(node):

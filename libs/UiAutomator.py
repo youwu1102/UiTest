@@ -69,6 +69,6 @@ class UiAutomator(object):
         return self.device.press(keycode)
 
 if __name__ == '__main__':
-    ui = UiAutomator('ce58ac0d')
-    print ui.click(resourceId='com.android.contacts:id/user_profile_button')
+    ui = UiAutomator()
+    print ui.click(**{'resourceId':'com.android.contacts:id/user_profile_button'})
 

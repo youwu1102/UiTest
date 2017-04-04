@@ -33,8 +33,11 @@ class Debug(object):
 
     def main(self):
         self.initialization()
-        self.traversal_path('Root')
-
+        root = self.traversal_path('Root')
+        self.case_doc.appendChild(root)
+        f = open(self.case_xml, "w")
+        f.write(self.case_doc.toprettyxml(indent='\t', encoding='utf-8'))
+        f.close()
         # while True:
         #     count += 1
         #     self.__set_current_dump_path(dump_name=count)
@@ -53,7 +56,6 @@ class Debug(object):
     def __create_xml(self):
         pass
 
-
     def traversal_path(self, parent):
         self.__set_current_dump_path()
         if parent == 'Root':
@@ -65,12 +67,29 @@ class Debug(object):
         for action in actions:
             node = self.case_doc.createElement('Node')
             for key in action.keys():
-                node.setAttribute(key,action.get(key))
+                node.setAttribute(key, action.get(key))
+            print action
             parent.appendChild(node)
-        self.case_doc.appendChild(parent)
-        f = open(self.case_xml, "w")
-        f.write(self.case_doc.toprettyxml(indent="  "))
-        f.close()
+        self.device.press_back()
+        return parent
+
+
+    def do_action(self,action):
+        act = action.get('action')
+        if act == 'Click':
+            self.device.click()
+
+
+
+    @staticmethod
+    def get_selector(action):
+        dict_tmp = dict()
+
+
+      return
+
+
+
 
 
 
@@ -86,6 +105,7 @@ class Debug(object):
 
 
 if __name__ == '__main__':
+
     package_name1 = "com.android.contacts"
     d = Debug(project='SDM660', package_name=package_name1)
     d.main()
