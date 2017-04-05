@@ -163,12 +163,22 @@ class Utility(object):
 
     @staticmethod
     def analysis_dump(dump_path):
+        Utility.output_msg('I will analysis the dump file: %s' % dump_path)
         eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path)
-        if True:
-        #if eigenvalue not in GlobalVariable.dict_dump_actions.keys():
+        Utility.output_msg('I get the eigenvalue: %s ' % eigenvalue)
+        if eigenvalue not in GlobalVariable.dict_E_M_A.keys():
+            Utility.output_msg('This eigenvalue has not appeared before.')
             nodes = Utility.__get_nodes_from_dump(dump_path)
             actions = Utility.__category_nodes(nodes)
-            GlobalVariable.dict_dump_actions[eigenvalue] = actions
+            GlobalVariable.dict_E_M_A[eigenvalue] = actions
+        else:
+            Utility.output_msg('This eigenvalue has appeared before.')
+        return eigenvalue
+
+    @staticmethod
+    def calculate_eigenvalue(dump_path):
+        eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path=dump_path)
+        Utility.output_msg('Tbe current dump eigenvalue is:%s' % eigenvalue)
         return eigenvalue
 
     @staticmethod
@@ -204,6 +214,15 @@ class Utility(object):
         Utility.wait_for_time(1)
         Utility.start_process_on_device(package_name)
         Utility.wait_for_time(1)
+
+    @staticmethod
+    def get_selector(action):
+        dict_tmp = dict()
+        for key in GlobalVariable.dict_selector.keys():
+            key_value = action.get(key)
+            if key_value:
+                dict_tmp[GlobalVariable.dict_selector.get(key)] = key_value
+        return dict_tmp
 
 if __name__ == '__main__':
     for x in range(10000):

@@ -14,4 +14,8 @@
 	<class id="11" name="android.widget.ImageView" type="common" />
 	<class id="12" name="android.widget.EditText" type="common" />
 	<class id="13" name="android.widget.Spinner" type="common" />
+	<class id="14" name="android.widget.RadioButton" type="common" />
+	<class id="15" name="android.widget.RelativeLayout" type="common" />
+	<class id="16" name="android.widget.CheckBox" type="common" />
+	<class id="17" name="android.support.v7.widget.RecyclerView" type="common" />
 	</root>

@@ -2,8 +2,8 @@
 from os.path import join
 
 class GlobalVariable(object):
-    # working_directory = 'C:\\cygwin64\\home\\c_youwu\\UiTest'
-    working_directory = 'C:\\Users\\wuyou\\Desktop\\UiTest'
+    working_directory = 'C:\\cygwin64\\home\\c_youwu\\UiTest'
+    # working_directory = 'C:\\Users\\wuyou\\Desktop\\UiTest'
 
     configs_directory = join(working_directory, 'configs')
     logs_directory = join(working_directory, 'logs')
@@ -22,11 +22,16 @@ class GlobalVariable(object):
     list_attrs = ['index', 'text', 'resource-id', 'package', 'content-desc', 'checkable', 'checked',
                   'clickable', 'enabled', 'focusable', 'focused', 'scrollable', 'long-clickable',
                   'password', 'selected', 'bounds', 'class']
-    list_selector = ['index', 'text', 'resource-id', 'content-desc', 'class']
+    dict_selector = {'index': 'index',
+                     'text': 'text',
+                     'resource-id': 'resourceId',
+                     'content-desc': 'description',
+                     'class': 'className'}
 
     # ===============================================
 
-    dict_dump_actions = dict()
+    dict_E_M_A = dict()  # eigenvalue mapping action
+    dict_E_M_N = dict()  # eigenvalue mapping node
 
 if __name__ == '__main__':
     print GlobalVariable.host_utils
