@@ -18,4 +18,6 @@
 	<class id="15" name="android.widget.RelativeLayout" type="common" />
 	<class id="16" name="android.widget.CheckBox" type="common" />
 	<class id="17" name="android.support.v7.widget.RecyclerView" type="common" />
+	<class id="18" name="com.android.launcher3.Workspace" type="common" />
+	<class id="19" name="android.support.v4.widget.DrawerLayout" type="common" />
 	</root>

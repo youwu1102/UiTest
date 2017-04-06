@@ -12,7 +12,7 @@ class Debug(object):
         self.project = project
         self.package_name = package_name
         self.device = UiAutomator(serial)
-        self.log_directory = Utility.make_dirs(join(GlobalVariable.logs_directory, Utility.get_timestamp(), package_name))
+        self.log_directory = Utility.make_dirs(join(GlobalVariable.logs_directory, package_name))
         self.case_directory = Utility.make_dirs(join(GlobalVariable.case_utils, project, package_name))
         self.case_xml = self.rename_case_xml()
         self.current_dump = ''
@@ -20,7 +20,14 @@ class Debug(object):
         self.current_dump_screenshot = ''
         self.case_doc = Document()
         self.root_count = 0
-        self.home = []
+        self.dict_E_M_H = {}
+        self.dict_E_M_S = {}
+        self.root_list = []
+        self.level_1_list = []
+        self.level_2_list = []
+        self.level_3_list = []
+        self.level_4_list = []
+        self.level_5_list = []
 
     def rename_case_xml(self):
         case_xml = join(self.case_directory, 'Config.xml')
@@ -35,8 +42,17 @@ class Debug(object):
 
     def main(self):
         self.initialization()
-        self.return_home()
-        #self.traversal_level_1(step='', count=self.root_count)
+        self.generate_root_file()
+        self.traversal(root=0)
+
+
+
+
+    def traversal(self, root):
+        self.traversal_level_1(root)
+        self.traversal_level_2()
+        self.traversal_level_3()
+        self.traversal_level_4()
 
     def get_current_eigenvalue(self):
         self.device.dump('current')
@@ -44,31 +60,50 @@ class Debug(object):
 
     def return_home(self):
         Utility.output_msg('I want to return home page.')
-        while self.get_current_eigenvalue() not in self.home:
+        while self.get_current_eigenvalue() not in self.dict_E_M_H.keys():
             Utility.output_msg('is diff')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
                 Utility.start_process_on_device(self.package_name)
-                self.home.append(self.get_current_eigenvalue())
+                gce = self.get_current_eigenvalue()
+                if gce not in self.dict_E_M_H.keys():
+                    self.generate_root_file()
+                    self.traversal(root=self.dict_E_M_H.get(gce))
                 break
 
-    def traversal_level_1(self, step, count):
-        step = self.__set_current_dump_path(parent=step, count=count)
-        self.device.dump(self.current_dump)
-        self.device.screenshot(self.current_dump_screenshot)
-        eigenvalue = Utility.analysis_dump(self.current_dump)
-        if eigenvalue not in self.list_eigenvalue:
-            self.list_eigenvalue.append(eigenvalue)
-            self.dict_S_M_E[step] = eigenvalue
-            actions = GlobalVariable.dict_E_M_A.get(eigenvalue)
-            with open(self.current_dump_txt, 'w') as w_file:
-                for x in range(len(actions)):
-                    w_file.write(str(actions[x])+'\r')
-
-        else:
-            print 'sss'
+    def get_dump_text_file_path(self, name):
+        return join(self.log_directory, '%s.txt' % name)
 
 
+    def traversal_level_1(self, root):
+        with open(self.get_dump_text_file_path(name=root)) as r:
+            content = r.readlines()
+            print content
+        eigenvalue = content[0].strip('\r\n')
+        actions = GlobalVariable.dict_E_M_A.get(eigenvalue)
+        for x in range(len(actions)):
+            self.do_action(actions[x])
+            self.generate_dump_file('%s|%s' % (root, x))
+            self.device.press_back()
+            if self.get_current_eigenvalue() != eigenvalue:
+                print 'sssssssssssssssssssssss'
+                self.return_home()
+
+
+
+
+
+    def traversal_level_2(self):
+        pass
+
+    def traversal_level_3(self):
+        pass
+
+    def traversal_level_4(self):
+        pass
+
+    def traversal_level_5(self):
+        pass
 
 
         # root = self.traversal_path('Root')
@@ -90,8 +125,6 @@ class Debug(object):
             # else:
             #     self.device.press_back()
 
-    def __create_xml(self):
-        pass
 
     # def traversal_path(self, parent):
     #     self.__set_current_dump_path()
@@ -135,11 +168,32 @@ class Debug(object):
         return name
 
     def initialization(self):
-        self.__set_current_dump_path(name=0)
+        pass
+
+
+    def generate_root_file(self):
+        self.root_list.append(self.root_count)
+        self.__set_current_dump_path(name=self.root_count)
         self.device.dump(self.current_dump)
         self.device.screenshot(self.current_dump_screenshot)
-        self.home.append(Utility.calculate_eigenvalue(self.current_dump))
+        self.dict_E_M_H[self.get_current_eigenvalue()] = self.root_count
+        self.root_count += 1
+        eigenvalue = Utility.analysis_dump(self.current_dump)
+        with open(self.current_dump_txt, 'w') as w:
+            w.write(eigenvalue+'\n')
+            for action in GlobalVariable.dict_E_M_A.get(eigenvalue):
+                w.write(str(action)+'\n')
 
+
+    def generate_dump_file(self,name):
+        self.__set_current_dump_path(name=name)
+        self.device.dump(self.current_dump)
+        self.device.screenshot(self.current_dump_screenshot)
+        eigenvalue = Utility.analysis_dump(self.current_dump)
+        with open(self.current_dump_txt, 'w') as w:
+            w.write(eigenvalue+'\n')
+            for action in GlobalVariable.dict_E_M_A.get(eigenvalue):
+                w.write(str(action)+'\n')
 
 
 if __name__ == '__main__':
