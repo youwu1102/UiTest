@@ -20,6 +20,7 @@ class Debug(object):
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
         self.list_home = []
+        self.count = 0
 
     def rename_case_xml(self):
         case_xml = join(self.case_directory, 'Config.xml')
@@ -35,8 +36,15 @@ class Debug(object):
     def main(self):
         self.initialization()
         while True:
-            
-
+            self.__set_current_dump_path(name='%04d' % self.count)
+            self.device.dump(self.current_dump)
+            self.device.screenshot(self.current_dump_screenshot)
+            ce = Utility.analysis_dump(self.current_dump) # ce = current eigenvalue
+            cn = GlobalVariable.dict_E_M_N.get(ce) # cn = current node
+            if cn.get_open():
+                self.do_action(cn)
+            else:
+                self.device.press_back()
 
     def get_info_from_current_dump(self):
         pass
@@ -143,11 +151,14 @@ class Debug(object):
 
 
 
-    def do_action(self, action):
+    def do_action(self, current_node):
+        action = current_node.get_open()[0]
         option = action.get('action')
         selector = Utility.get_selector(action=action)
         if option == 'Click':
-            return self.device.click(**selector)
+            if self.device.click(**selector):
+                current_node.move_to_closed(action)
+
         else:
             Utility.output_msg('Unknown option: %s.' % option)
 
@@ -155,6 +166,7 @@ class Debug(object):
         self.current_dump = join(self.log_directory, '%s.uix' % name)
         self.current_dump_screenshot = join(self.log_directory, '%s.png' % name)
         self.current_dump_txt = join(self.log_directory, '%s.txt' % name)
+        self.count += 1
         return name
 
     def initialization(self):
@@ -180,10 +192,11 @@ class Debug(object):
         self.device.dump(self.current_dump)
         self.device.screenshot(self.current_dump_screenshot)
         eigenvalue = Utility.analysis_dump(self.current_dump)
-        with open(self.current_dump_txt, 'w') as w:
-            w.write(eigenvalue+'\n')
-            for action in GlobalVariable.dict_E_M_A.get(eigenvalue):
-                w.write(str(action)+'\n')
+        return eigenvalue
+        # with open(self.current_dump_txt, 'w') as w:
+        #     w.write(eigenvalue+'\n')
+        #     for action in GlobalVariable.dict_E_M_A.get(eigenvalue):
+        #         w.write(str(action)+'\n')
 
 
 if __name__ == '__main__':

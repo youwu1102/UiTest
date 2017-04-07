@@ -19,10 +19,11 @@ class TraversalNode(object):
         pass
 
     def init_open(self, open_list):
-        pass
+        self.__open = open_list
 
     def move_to_closed(self, element):
-        pass
+        self.__open.remove(element)
+        self.__closed.append(element)
 
     def get_open(self):
         return self.__open
