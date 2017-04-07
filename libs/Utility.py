@@ -7,8 +7,9 @@ from time import sleep
 from ADB import Adb
 from Eigenvalue import Eigenvalue
 from xml.dom import minidom
-from Nodes import Nodes
+from DumpNodes import DumpNodes
 from TimeFormat import TimeFormat
+from TraversalNode import TraversalNode
 
 
 class Utility(object):
@@ -166,14 +167,21 @@ class Utility(object):
         Utility.output_msg('I will analysis the dump file: %s' % dump_path)
         eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path)
         Utility.output_msg('I get the eigenvalue: %s ' % eigenvalue)
-        if eigenvalue not in GlobalVariable.dict_E_M_A.keys():
+        if eigenvalue not in GlobalVariable.dict_E_M_N.keys():
             Utility.output_msg('This eigenvalue has not appeared before.')
-            nodes = Utility.__get_nodes_from_dump(dump_path)
-            actions = Utility.__category_nodes(nodes)
-            GlobalVariable.dict_E_M_A[eigenvalue] = actions
+            node = TraversalNode(eigenvalue)
+            node.append_previous()
+            node.init_open(Utility.__get_actions_from_dump(dump_path))
+            GlobalVariable.dict_E_M_N[eigenvalue] = node
         else:
             Utility.output_msg('This eigenvalue has appeared before.')
         return eigenvalue
+
+    @staticmethod
+    def __get_actions_from_dump(dump_path):
+        nodes = Utility.__get_nodes_from_dump(dump_path)
+        actions = Utility.__category_nodes(nodes)
+        return actions
 
     @staticmethod
     def calculate_eigenvalue(dump_path):
@@ -196,7 +204,7 @@ class Utility(object):
 
     @staticmethod
     def __category_nodes(dump_nodes):  # 分类节点，将有用的留下 删除没用的
-        Nodes.remove_useless_nodes(dump_nodes)
+        DumpNodes.remove_useless_nodes(dump_nodes)
         return dump_nodes
 
     @staticmethod

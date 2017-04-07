@@ -1,9 +1,8 @@
 __author__ = 'c_youwu'
-
-
+from GlobalVariable import GlobalVariable
 
 class TraversalNode(object):
-    def __init__(self,eigenvalue):
+    def __init__(self, eigenvalue):
         self.__eigenvalue = eigenvalue
         self.__open = []
         self.__closed = []
@@ -11,12 +10,15 @@ class TraversalNode(object):
         self.__next = []
 
     def append_previous(self):
-        pass
+        if GlobalVariable.previous_node and GlobalVariable.previous_step:
+            self.__previous.append([GlobalVariable.previous_node, GlobalVariable.previous_step])
+        else:
+            print('Can not find previous node.')
 
     def append_next(self):
         pass
 
-    def init_open(self):
+    def init_open(self, open_list):
         pass
 
     def move_to_closed(self, element):

@@ -2,9 +2,10 @@ __author__ = 'c_youwu'
 from UiAutomator import UiAutomator
 from Utility import Utility
 from GlobalVariable import GlobalVariable
+from TraversalNode import TraversalNode
 from os.path import join
 import os
-from xml.dom.minidom import Document
+
 
 
 class Debug(object):
@@ -18,16 +19,7 @@ class Debug(object):
         self.current_dump = ''
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
-        self.case_doc = Document()
-        self.root_count = 0
-        self.dict_E_M_H = {}
-        self.dict_E_M_S = {}
-        self.root_list = []
-        self.level_1_list = []
-        self.level_2_list = []
-        self.level_3_list = []
-        self.level_4_list = []
-        self.level_5_list = []
+        self.list_home = []
 
     def rename_case_xml(self):
         case_xml = join(self.case_directory, 'Config.xml')
@@ -42,11 +34,12 @@ class Debug(object):
 
     def main(self):
         self.initialization()
-        self.generate_root_file()
-        self.traversal(root=0)
+        while True:
+            
 
 
-
+    def get_info_from_current_dump(self):
+        pass
 
     def traversal(self, root):
         self.traversal_level_1(root)
@@ -59,16 +52,13 @@ class Debug(object):
         return Utility.calculate_eigenvalue('current')
 
     def return_home(self):
-        Utility.output_msg('I want to return home page.')
-        while self.get_current_eigenvalue() not in self.dict_E_M_H.keys():
-            Utility.output_msg('is diff')
+        Utility.output_msg('I want to return home window.')
+        while self.get_current_eigenvalue() not in self.list_home:
+            Utility.output_msg('Current windos is not home window,press back key.')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
                 Utility.start_process_on_device(self.package_name)
-                gce = self.get_current_eigenvalue()
-                if gce not in self.dict_E_M_H.keys():
-                    self.generate_root_file()
-                    self.traversal(root=self.dict_E_M_H.get(gce))
+                self.list_home.append(self.get_current_eigenvalue())
                 break
 
     def get_dump_text_file_path(self, name):
@@ -168,7 +158,7 @@ class Debug(object):
         return name
 
     def initialization(self):
-        pass
+        self.return_home()
 
 
     def generate_root_file(self):
