@@ -1,11 +1,11 @@
-__author__ = 'c_youwu'
-from UiAutomator import UiAutomator
-from Utility import Utility
-from GlobalVariable import GlobalVariable
-from TraversalNode import TraversalNode
+# -*- encoding:UTF-8 -*-
+from libs.UiAutomator import UiAutomator
+from libs.Utility import Utility
+from libs.GlobalVariable import GlobalVariable
+from libs.TraversalNode import TraversalNode
+from libs.Dump import Analysis
 from os.path import join
 import os
-
 
 
 class Debug(object):
@@ -19,8 +19,9 @@ class Debug(object):
         self.current_dump = ''
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
-        self.list_home = []
-        self.count = 0
+        self.expected_return_location = ''  #
+        self.dict_traversal_node = dict()
+        self.__count = 0
 
     def rename_case_xml(self):
         case_xml = join(self.case_directory, 'Config.xml')
@@ -36,32 +37,32 @@ class Debug(object):
     def main(self):
         self.initialization()
         while True:
-
-            ce = Utility.analysis_dump(self.current_dump) # ce = current eigenvalue
-            cn = GlobalVariable.dict_E_M_N.get(ce) # cn = current node
-            if cn.get_open():
-                self.do_action(cn)
-            else:
-                self.device.press_back()
+            self.tmp()
+                # ce = Utility.analysis_dump(self.current_dump) # ce = current eigenvalue
+                # cn = GlobalVariable.dict_E_M_N.get(ce) # cn = current node
+                # if cn.get_open():
+                #     self.do_action(cn)
+                # else:
+                #     self.device.press_back()
 
     def dump_current_window(self):
-        self.__set_current_dump_path(name='%04d' % self.count)
+        self.__set_current_dump_path()
         self.device.dump(self.current_dump)
         self.device.screenshot(self.current_dump_screenshot)
 
 
     def get_current_eigenvalue(self):
         self.device.dump('current')
-        return Utility.calculate_eigenvalue('current')
+        return Analysis.calculate_eigenvalue('current')
 
-    def return_home(self):
+    def return_to_expect_location(self):  # 返回预期位置
         Utility.output_msg('I want to return home window.')
-        while self.get_current_eigenvalue() not in self.list_home:
+        while self.get_current_eigenvalue() != self.expected_return_location:
             Utility.output_msg('Current windos is not home window,press back key.')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
                 Utility.start_process_on_device(self.package_name)
-                self.list_home.append(self.get_current_eigenvalue())
+                self.expected_return_location = self.get_current_eigenvalue()
                 break
 
     def get_dump_text_file_path(self, name):
@@ -129,44 +130,44 @@ class Debug(object):
     #     return parent
     #
 
-
-
-    def do_action(self, current_node):
-        action = current_node.get_open()[0]
+    def do_action(self, traversal_node):
+        action = traversal_node.get_open()[0]
         option = action.get('action')
         selector = Utility.get_selector(action=action)
         if option == 'Click':
             if self.device.click(**selector):
-                current_node.move_to_closed(action)
-
+                traversal_node.move_to_closed(action)
         else:
             Utility.output_msg('Unknown option: %s.' % option)
 
-    def __set_current_dump_path(self):
-        self.current_dump = join(self.log_directory, '%04d.uix' % self.count)
-        self.current_dump_screenshot = join(self.log_directory, '%04d.png' % self.count)
-        self.current_dump_txt = join(self.log_directory, '%04d.txt' % self.count)
-        self.count += 1
+
 
     def initialization(self):
-        self.return_home()
+        self.return_to_expect_location()
 
-
-
-    def generate_dump_file(self,name):
-        self.__set_current_dump_path(name=name)
-        self.device.dump(self.current_dump)
-        self.device.screenshot(self.current_dump_screenshot)
-        eigenvalue = Utility.analysis_dump(self.current_dump)
-        return eigenvalue
 
     def tmp(self):
-        self.__set_current_dump_path()
-        current_eigenvalue = Utility.analysis_dump(self.current_dump)
-        current_nodes = GlobalVariable.dict_E_M_N.get(current_eigenvalue)
+        self.dump_current_window()
+        current_eigenvalue, current_nodes = Analysis.get_info_from_dump(self.current_dump)
+        if current_eigenvalue not in self.dict_traversal_node:
+            traversal_node = TraversalNode(current_eigenvalue)
+            self.dict_traversal_node[current_eigenvalue] = traversal_node
 
 
+    def __set_current_dump_path(self):  # 更新最新的dump路径，每次调用自动加1
+        self.current_dump = join(self.log_directory, '%04d.uix' % self.__count)
+        self.current_dump_screenshot = join(self.log_directory, '%04d.png' % self.__count)
+        self.current_dump_txt = join(self.log_directory, '%04d.txt' % self.__count)
+        self.__count += 1
 
+    @staticmethod
+    def get_selector(action):
+        dict_tmp = dict()
+        for key in GlobalVariable.dict_selector.keys():
+            key_value = action.get(key)
+            if key_value:
+                dict_tmp[GlobalVariable.dict_selector.get(key)] = key_value
+        return dict_tmp
 
 if __name__ == '__main__':
 

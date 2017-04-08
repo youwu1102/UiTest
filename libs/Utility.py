@@ -162,14 +162,7 @@ class Utility(object):
         Utility.start_process_on_device(package_name)
         Utility.wait_for_time(1)
 
-    @staticmethod
-    def get_selector(action):
-        dict_tmp = dict()
-        for key in GlobalVariable.dict_selector.keys():
-            key_value = action.get(key)
-            if key_value:
-                dict_tmp[GlobalVariable.dict_selector.get(key)] = key_value
-        return dict_tmp
+
 
 if __name__ == '__main__':
     for x in range(10000):

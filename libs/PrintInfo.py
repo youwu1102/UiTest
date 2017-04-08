@@ -27,7 +27,7 @@ class Print(object):
     @staticmethod
     def debug(msg):
         msg = TimeFormat.timestamp() + ' DEBUG: ' + str(msg)
-        print msg
+        #print msg
         Print.__write(msg)
 
     @staticmethod
