@@ -36,9 +36,7 @@ class Debug(object):
     def main(self):
         self.initialization()
         while True:
-            self.__set_current_dump_path(name='%04d' % self.count)
-            self.device.dump(self.current_dump)
-            self.device.screenshot(self.current_dump_screenshot)
+
             ce = Utility.analysis_dump(self.current_dump) # ce = current eigenvalue
             cn = GlobalVariable.dict_E_M_N.get(ce) # cn = current node
             if cn.get_open():
@@ -46,14 +44,11 @@ class Debug(object):
             else:
                 self.device.press_back()
 
-    def get_info_from_current_dump(self):
-        pass
+    def dump_current_window(self):
+        self.__set_current_dump_path(name='%04d' % self.count)
+        self.device.dump(self.current_dump)
+        self.device.screenshot(self.current_dump_screenshot)
 
-    def traversal(self, root):
-        self.traversal_level_1(root)
-        self.traversal_level_2()
-        self.traversal_level_3()
-        self.traversal_level_4()
 
     def get_current_eigenvalue(self):
         self.device.dump('current')
@@ -87,21 +82,6 @@ class Debug(object):
                 print 'sssssssssssssssssssssss'
                 self.return_home()
 
-
-
-
-
-    def traversal_level_2(self):
-        pass
-
-    def traversal_level_3(self):
-        pass
-
-    def traversal_level_4(self):
-        pass
-
-    def traversal_level_5(self):
-        pass
 
 
         # root = self.traversal_path('Root')
@@ -162,29 +142,15 @@ class Debug(object):
         else:
             Utility.output_msg('Unknown option: %s.' % option)
 
-    def __set_current_dump_path(self, name):
-        self.current_dump = join(self.log_directory, '%s.uix' % name)
-        self.current_dump_screenshot = join(self.log_directory, '%s.png' % name)
-        self.current_dump_txt = join(self.log_directory, '%s.txt' % name)
+    def __set_current_dump_path(self):
+        self.current_dump = join(self.log_directory, '%04d.uix' % self.count)
+        self.current_dump_screenshot = join(self.log_directory, '%04d.png' % self.count)
+        self.current_dump_txt = join(self.log_directory, '%04d.txt' % self.count)
         self.count += 1
-        return name
 
     def initialization(self):
         self.return_home()
 
-
-    def generate_root_file(self):
-        self.root_list.append(self.root_count)
-        self.__set_current_dump_path(name=self.root_count)
-        self.device.dump(self.current_dump)
-        self.device.screenshot(self.current_dump_screenshot)
-        self.dict_E_M_H[self.get_current_eigenvalue()] = self.root_count
-        self.root_count += 1
-        eigenvalue = Utility.analysis_dump(self.current_dump)
-        with open(self.current_dump_txt, 'w') as w:
-            w.write(eigenvalue+'\n')
-            for action in GlobalVariable.dict_E_M_A.get(eigenvalue):
-                w.write(str(action)+'\n')
 
 
     def generate_dump_file(self,name):
@@ -193,10 +159,13 @@ class Debug(object):
         self.device.screenshot(self.current_dump_screenshot)
         eigenvalue = Utility.analysis_dump(self.current_dump)
         return eigenvalue
-        # with open(self.current_dump_txt, 'w') as w:
-        #     w.write(eigenvalue+'\n')
-        #     for action in GlobalVariable.dict_E_M_A.get(eigenvalue):
-        #         w.write(str(action)+'\n')
+
+    def tmp(self):
+        self.__set_current_dump_path()
+        current_eigenvalue = Utility.analysis_dump(self.current_dump)
+        current_nodes = GlobalVariable.dict_E_M_N.get(current_eigenvalue)
+
+
 
 
 if __name__ == '__main__':

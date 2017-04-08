@@ -1,5 +1,5 @@
-from Utility import Utility
-from GlobalVariable import GlobalVariable
+from libs.Utility import Utility
+from libs.GlobalVariable import GlobalVariable
 from DebugMain import Debug
 
 

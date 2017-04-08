@@ -4,6 +4,8 @@ from xml.etree.ElementTree import ElementTree, Element
 from GlobalVariable import GlobalVariable
 import xml.dom.minidom as xdm
 from xml.dom.minidom import Node
+
+
 class Eigenvalue(object):
     @staticmethod
     def __get_dict_of_number_map_letter(upper=True):

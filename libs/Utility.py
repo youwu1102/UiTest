@@ -150,17 +150,6 @@ class Utility(object):
         else:
             Print.debug(msg)
 
-    @staticmethod
-    def pull_dump_file_to_pc(local):
-        Utility.run_command_on_pc(Adb.pull(remote='/data/local/tmp/current.xml', local=local))
-
-    @staticmethod
-    def push_action_file_to_device(local):
-        Utility.run_command_on_pc(Adb.push(local=local, remote='/data/local/tmp/Action.txt'))
-
-    @staticmethod
-    def write_action_file():
-        pass
 
     @staticmethod
     def analysis_dump(dump_path):
