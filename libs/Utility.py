@@ -5,11 +5,7 @@ import os
 import re
 from time import sleep
 from ADB import Adb
-from Eigenvalue import Eigenvalue
-from xml.dom import minidom
-from DumpNodes import DumpNodes
 from TimeFormat import TimeFormat
-from TraversalNode import TraversalNode
 
 
 class Utility(object):
@@ -149,52 +145,6 @@ class Utility(object):
             Print.warm(msg)
         else:
             Print.debug(msg)
-
-
-    @staticmethod
-    def analysis_dump(dump_path):
-        Utility.output_msg('I will analysis the dump file: %s' % dump_path)
-        eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path)
-        Utility.output_msg('I get the eigenvalue: %s ' % eigenvalue)
-        if eigenvalue not in GlobalVariable.dict_E_M_N.keys():
-            Utility.output_msg('This eigenvalue has not appeared before.')
-            node = TraversalNode(eigenvalue)
-            node.append_previous()
-            node.init_open(Utility.__get_actions_from_dump(dump_path))
-            GlobalVariable.dict_E_M_N[eigenvalue] = node
-        else:
-            Utility.output_msg('This eigenvalue has appeared before.')
-        return eigenvalue
-
-    @staticmethod
-    def __get_actions_from_dump(dump_path):
-        nodes = Utility.__get_nodes_from_dump(dump_path)
-        actions = Utility.__category_nodes(nodes)
-        return actions
-
-    @staticmethod
-    def calculate_eigenvalue(dump_path):
-        eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path=dump_path)
-        Utility.output_msg('Tbe current dump eigenvalue is:%s' % eigenvalue)
-        return eigenvalue
-
-    @staticmethod
-    def __get_nodes_from_dump(dump_path):
-        node_list = []
-        dom = minidom.parse(dump_path)
-        root = dom.documentElement
-        nodes = root.getElementsByTagName('node')
-        for node in nodes:
-            dict_node = {}
-            for attr in GlobalVariable.list_attrs:
-                dict_node[attr] = node.getAttribute(attr)
-            node_list.append(dict_node)
-        return node_list
-
-    @staticmethod
-    def __category_nodes(dump_nodes):  # 分类节点，将有用的留下 删除没用的
-        DumpNodes.remove_useless_nodes(dump_nodes)
-        return dump_nodes
 
     @staticmethod
     def get_timestamp():
