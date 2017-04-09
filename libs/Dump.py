@@ -38,11 +38,11 @@ class Analysis(object):
         Utility.output_msg('I will analysis the dump file: %s' % dump_path)
         eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path)
         Utility.output_msg('I got the eigenvalue: %s ' % eigenvalue)
-        nodes = Analysis.get_nodes_from_dump(dump_path)
-        Utility.output_msg('I got the nodes:', 'd')
-        for node in nodes:
+        window_nodes = Analysis.get_nodes_from_dump(dump_path)
+        Utility.output_msg('I got the window nodes:', 'd')
+        for node in window_nodes:
             Utility.output_msg(str(node), 'd')
-        return eigenvalue, nodes
+        return eigenvalue, window_nodes
 
         # if eigenvalue not in GlobalVariable.dict_E_M_N.keys():
         #     Utility.output_msg('This eigenvalue has not appeared before.')

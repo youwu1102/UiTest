@@ -18,8 +18,8 @@ class TraversalNode(object):
     def append_next(self):
         pass
 
-    def init_open(self, open_list):
-        self.__open = open_list
+    def init_open(self, window_nodes):
+        self.__open = window_nodes
 
     def move_to_closed(self, element):
         self.__open.remove(element)

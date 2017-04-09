@@ -31,8 +31,7 @@ class GlobalVariable(object):
     # ===============================================
 
     dict_E_M_N = dict()  # eigenvalue mapping node
-    previous_node = None
-    previous_step = None
+
 
 if __name__ == '__main__':
     print GlobalVariable.host_utils

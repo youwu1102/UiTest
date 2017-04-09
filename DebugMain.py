@@ -19,9 +19,11 @@ class Debug(object):
         self.current_dump = ''
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
-        self.expected_return_location = ''  #
-        self.dict_traversal_node = dict()
-        self.__count = 0
+        self.expected_return_location = ''  # 期望返回的路径位置
+        self.previous_dump_eigenvalue = ''  # 上一个遍历节点的特征值 用他来找到节点
+        self.previous_window_node = None  # 上一个遍历节点里的操作节点
+        self.dict_traversal_node = dict()  # 每一个特征值对应一个遍历路径上的节点
+        self.__count = 0  # 计数器
 
     def rename_case_xml(self):
         case_xml = join(self.case_directory, 'Config.xml')
@@ -69,22 +71,19 @@ class Debug(object):
         return join(self.log_directory, '%s.txt' % name)
 
 
-    def traversal_level_1(self, root):
-        with open(self.get_dump_text_file_path(name=root)) as r:
-            content = r.readlines()
-            print content
-        eigenvalue = content[0].strip('\r\n')
-        actions = GlobalVariable.dict_E_M_A.get(eigenvalue)
-        for x in range(len(actions)):
-            self.do_action(actions[x])
-            self.generate_dump_file('%s|%s' % (root, x))
-            self.device.press_back()
-            if self.get_current_eigenvalue() != eigenvalue:
-                print 'sssssssssssssssssssssss'
-                self.return_home()
-
-
-
+    # def traversal_level_1(self, root):
+    #     with open(self.get_dump_text_file_path(name=root)) as r:
+    #         content = r.readlines()
+    #         print content
+    #     eigenvalue = content[0].strip('\r\n')
+    #     actions = GlobalVariable.dict_E_M_A.get(eigenvalue)
+    #     for x in range(len(actions)):
+    #         self.do_action(actions[x])
+    #         self.generate_dump_file('%s|%s' % (root, x))
+    #         self.device.press_back()
+    #         if self.get_current_eigenvalue() != eigenvalue:
+    #             print 'sssssssssssssssssssssss'
+    #             self.return_home()
         # root = self.traversal_path('Root')
         # self.case_doc.appendChild(root)
         # f = open(self.case_xml, "w")
@@ -140,19 +139,23 @@ class Debug(object):
         else:
             Utility.output_msg('Unknown option: %s.' % option)
 
-
-
     def initialization(self):
         self.return_to_expect_location()
 
-
     def tmp(self):
-        self.dump_current_window()
-        current_eigenvalue, current_nodes = Analysis.get_info_from_dump(self.current_dump)
-        if current_eigenvalue not in self.dict_traversal_node:
-            traversal_node = TraversalNode(current_eigenvalue)
-            self.dict_traversal_node[current_eigenvalue] = traversal_node
+        current_traversal_node = self.get_current_traversal_node()
+        open_list = current_traversal_node.get_open()
 
+    def get_current_traversal_node(self):  # 获取当前界面的节点
+        self.dump_current_window()
+        current_eigenvalue, current_window_nodes = Analysis.get_info_from_dump(self.current_dump)
+        if current_eigenvalue not in self.dict_traversal_node:
+            current_traversal_node = TraversalNode(current_eigenvalue)
+            current_traversal_node.init_open(current_window_nodes)
+            self.dict_traversal_node[current_eigenvalue] = current_traversal_node
+        else:
+            current_traversal_node = self.dict_traversal_node.get(current_eigenvalue)
+        return current_traversal_node
 
     def __set_current_dump_path(self):  # 更新最新的dump路径，每次调用自动加1
         self.current_dump = join(self.log_directory, '%04d.uix' % self.__count)
