@@ -21,4 +21,5 @@
 	<class id="18" name="com.android.launcher3.Workspace" type="common" />
 	<class id="19" name="android.support.v4.widget.DrawerLayout" type="common" />
 	<class id="20" name="android.appwidget.AppWidgetHostView" type="common" />
+	<class id="21" name="com.android.inputmethod.keyboard.Key" type="common" />
 	</root>

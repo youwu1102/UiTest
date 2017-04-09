@@ -176,7 +176,6 @@ class Debug(object):
         return dict_tmp
 
 if __name__ == '__main__':
-
     package_name1 = "com.android.contacts"
     d = Debug(project='SDM660', package_name=package_name1)
     d.main()
