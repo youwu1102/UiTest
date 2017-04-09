@@ -22,8 +22,11 @@ class TraversalNode(object):
         self.__open = window_nodes
 
     def move_to_closed(self, element):
+        print self.__closed
         self.__open.remove(element)
         self.__closed.append(element)
+        print self.__closed
+
 
     def get_open(self):
         return self.__open

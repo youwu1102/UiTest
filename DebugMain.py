@@ -20,7 +20,7 @@ class Debug(object):
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
         self.expected_return_location = ''  # 期望返回的路径位置
-        self.previous_dump_eigenvalue = ''  # 上一个遍历节点的特征值 用他来找到节点
+        self.previous_dump_node = None  # 上一个遍历节点
         self.previous_window_node = None  # 上一个遍历节点里的操作节点
         self.dict_traversal_node = dict()  # 每一个特征值对应一个遍历路径上的节点
         self.__count = 0  # 计数器
@@ -129,15 +129,14 @@ class Debug(object):
     #     return parent
     #
 
-    def do_action(self, traversal_node):
-        action = traversal_node.get_open()[0]
+    def do_action(self, action):
         option = action.get('action')
-        selector = Utility.get_selector(action=action)
+        selector = self.get_selector(action=action)
         if option == 'Click':
-            if self.device.click(**selector):
-                traversal_node.move_to_closed(action)
+            return self.device.click(**selector)
         else:
             Utility.output_msg('Unknown option: %s.' % option)
+            return False
 
     def initialization(self):
         self.return_to_expect_location()
@@ -145,6 +144,10 @@ class Debug(object):
     def tmp(self):
         current_traversal_node = self.get_current_traversal_node()
         open_list = current_traversal_node.get_open()
+        if open_list:
+            if self.do_action(action=open_list[0]):
+                current_traversal_node.move_to_closed(open_list[0])
+
 
     def get_current_traversal_node(self):  # 获取当前界面的节点
         self.dump_current_window()
@@ -163,8 +166,8 @@ class Debug(object):
         self.current_dump_txt = join(self.log_directory, '%04d.txt' % self.__count)
         self.__count += 1
 
-    @staticmethod
-    def get_selector(action):
+    @classmethod
+    def get_selector(cls, action):
         dict_tmp = dict()
         for key in GlobalVariable.dict_selector.keys():
             key_value = action.get(key)

@@ -22,8 +22,7 @@ class GlobalVariable(object):
     list_attrs = ['index', 'text', 'resource-id', 'package', 'content-desc', 'checkable', 'checked',
                   'clickable', 'enabled', 'focusable', 'focused', 'scrollable', 'long-clickable',
                   'password', 'selected', 'bounds', 'class']
-    dict_selector = {'index': 'index',
-                     'text': 'text',
+    dict_selector = {'text': 'text',
                      'resource-id': 'resourceId',
                      'content-desc': 'description',
                      'class': 'className'}
