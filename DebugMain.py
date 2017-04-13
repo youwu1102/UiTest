@@ -39,6 +39,9 @@ class Debug(object):
     def main(self):
         self.initialization()
         while True:
+            if self.is_over():
+                print 'is over'
+                break
             self.tmp()
                 # ce = Utility.analysis_dump(self.current_dump) # ce = current eigenvalue
                 # cn = GlobalVariable.dict_E_M_N.get(ce) # cn = current node
@@ -58,17 +61,20 @@ class Debug(object):
         return Analysis.calculate_eigenvalue('current')
 
     def return_to_expect_location(self):  # 返回预期位置
-        Utility.output_msg('I want to return home window.')
+        Utility.output_msg('I want to return to except window.')
         while self.get_current_eigenvalue() != self.expected_return_location:
-            Utility.output_msg('Current windos is not home window,press back key.')
+            Utility.output_msg('Current window is not the except window,press back key.')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
                 Utility.start_process_on_device(self.package_name)
-                self.expected_return_location = self.get_current_eigenvalue()
+                current_traversal_node = self.get_current_traversal_node()
+                self.expected_return_location = current_traversal_node.get_node_eigenvalue()
                 break
 
-    def get_dump_text_file_path(self, name):
-        return join(self.log_directory, '%s.txt' % name)
+    def enter_to_except_location(self):
+        pass
+
+
 
 
     # def traversal_level_1(self, root):
@@ -142,11 +148,25 @@ class Debug(object):
         self.return_to_expect_location()
 
     def tmp(self):
-        current_traversal_node = self.get_current_traversal_node()
-        open_list = current_traversal_node.get_open()
-        if open_list:
-            if self.do_action(action=open_list[0]):
-                current_traversal_node.move_to_closed(open_list[0])
+        before_action = self.get_current_traversal_node()   # 操作之前的 界面节点
+        open_list = before_action.get_open()  # 获取操作之前的未执行过的操作
+        if open_list:  # 如果不为空，就执行操作
+            window_node = open_list[0]
+            if self.do_action(action=window_node):
+                before_action.move_to_closed(window_node)
+                after_action = self.get_current_traversal_node()
+                if not self.is_current_window_legal():
+                    Utility.output_msg('Current window is illegal.')
+                    return after_action.init_open([])
+                if before_action is after_action:
+                    Utility.output_msg('Interface is not changed')
+                else:
+                    Utility.output_msg('Interface has changed')
+                    after_action.append_previous({before_action.get_node_eigenvalue(): window_node})
+                    before_action.append_next({after_action.get_node_eigenvalue(): window_node})
+        else:  # 否则的话 就什么都不做了
+            Utility.output_msg('%s' % before_action.get_node_eigenvalue())
+            Utility.output_msg('All operations of current dump window have been completed')
 
 
     def get_current_traversal_node(self):  # 获取当前界面的节点
@@ -174,6 +194,17 @@ class Debug(object):
             if key_value:
                 dict_tmp[GlobalVariable.dict_selector.get(key)] = key_value
         return dict_tmp
+
+    def is_over(self):
+        for value in self.dict_traversal_node.values():
+            if value.get_open():
+                return False
+        return True
+
+    def is_current_window_legal(self):
+        if self.device.get_current_package_name() == self.package_name:
+            return True
+        return False
 
 if __name__ == '__main__':
     package_name1 = "com.android.contacts"
