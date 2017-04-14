@@ -19,10 +19,10 @@ class Debug(object):
         self.current_dump = ''
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
-        self.expected_return_location = ''  # 期望返回的路径位置
         self.previous_dump_node = None  # 上一个遍历节点
         self.previous_window_node = None  # 上一个遍历节点里的操作节点
         self.dict_traversal_node = dict()  # 每一个特征值对应一个遍历路径上的节点
+        self.list_eigenvalue = list()  # 记录遍历节点出现的顺序
         self.__count = 0  # 计数器
 
     def rename_case_xml(self):
@@ -39,16 +39,15 @@ class Debug(object):
     def main(self):
         self.initialization()
         while True:
-            if self.is_over():
-                print 'is over'
+            Utility.output_msg('=================================================================')
+            eigenvalue = self.get_not_complete_node()
+            if eigenvalue:# 判断是否全部结束了 没有再出现新节点
+                self.enter_to_except_location(eigenvalue)  #
+                self.tmp() #
+            else:
+                Utility.output_msg('All locations have been traversed.')
                 break
-            self.tmp()
-                # ce = Utility.analysis_dump(self.current_dump) # ce = current eigenvalue
-                # cn = GlobalVariable.dict_E_M_N.get(ce) # cn = current node
-                # if cn.get_open():
-                #     self.do_action(cn)
-                # else:
-                #     self.device.press_back()
+
 
     def dump_current_window(self):
         self.__set_current_dump_path()
@@ -60,80 +59,26 @@ class Debug(object):
         self.device.dump('current')
         return Analysis.calculate_eigenvalue('current')
 
-    def return_to_expect_location(self):  # 返回预期位置
+    def return_to_expect_location(self, except_location):  # 返回预期位置
         Utility.output_msg('I want to return to except window.')
-        while self.get_current_eigenvalue() != self.expected_return_location:
+        while self.get_current_eigenvalue() != except_location:
             Utility.output_msg('Current window is not the except window,press back key.')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
                 Utility.start_process_on_device(self.package_name)
-                current_traversal_node = self.get_current_traversal_node()
-                self.expected_return_location = current_traversal_node.get_node_eigenvalue()
                 break
 
-    def enter_to_except_location(self):
-        pass
+    def enter_to_except_location(self, expect_location):  # 进入预期位置
+        current = self.get_current_eigenvalue()
+        if current == expect_location:
+            Utility.output_msg('Already in the except location.')
+        else:
+            self.calculated_path(current=current, target=expect_location)
 
 
 
-
-    # def traversal_level_1(self, root):
-    #     with open(self.get_dump_text_file_path(name=root)) as r:
-    #         content = r.readlines()
-    #         print content
-    #     eigenvalue = content[0].strip('\r\n')
-    #     actions = GlobalVariable.dict_E_M_A.get(eigenvalue)
-    #     for x in range(len(actions)):
-    #         self.do_action(actions[x])
-    #         self.generate_dump_file('%s|%s' % (root, x))
-    #         self.device.press_back()
-    #         if self.get_current_eigenvalue() != eigenvalue:
-    #             print 'sssssssssssssssssssssss'
-    #             self.return_home()
-        # root = self.traversal_path('Root')
-        # self.case_doc.appendChild(root)
-        # f = open(self.case_xml, "w")
-        # f.write(self.case_doc.toprettyxml(indent='\t', encoding='utf-8'))
-        # f.close()
-        # while True:
-        #     count += 1
-        #     self.__set_current_dump_path(dump_name=count)
-        #
-        #     eigenvalue = Utility.analysis_dump(self.current_dump)
-        #     self.traversal_path('Root',)
-
-            # actions = GlobalVariable.dict_dump_actions.get(eigenvalue)
-            # if len(actions) > 0:
-            #     print actions
-            #     GlobalVariable.dict_dump_actions[eigenvalue] = []
-            # else:
-            #     self.device.press_back()
-
-
-    # def traversal_path(self, parent):
-    #     self.__set_current_dump_path()
-    #
-    #     # if parent == 'Root':
-    #     #     Utility.output_msg('Create \"ROOT\" node.')
-    #     #     parent = self.case_doc.createElement("Root")
-    #     # self.device.dump(self.current_dump)
-    #     # self.device.screenshot(self.current_dump_screenshot)
-    #     # eigenvalue = Utility.analysis_dump(self.current_dump)
-    #     # actions = GlobalVariable.dict_E_M_A.get(eigenvalue)
-    #     # tmp = actions[:]
-    #     # for action in tmp:
-    #     #     node = self.case_doc.createElement('Node')
-    #     #     node.setAttribute('eigenvalue', eigenvalue)
-    #     #     for key in action.keys():
-    #     #         node.setAttribute(key, action.get(key))
-    #     #     self.do_action(action)
-    #     #     actions.remove(action)
-    #     #     self.traversal_path(node)
-    #     #     parent.appendChild(node)
-    #     # self.device.press_back()
-    #
-    #     return parent
-    #
+    def calculated_path(self, current, target):
+        
 
     def do_action(self, action):
         option = action.get('action')
@@ -145,25 +90,29 @@ class Debug(object):
             return False
 
     def initialization(self):
-        self.return_to_expect_location()
+        self.return_to_expect_location(except_location='')
+        current_traversal_node = self.get_current_traversal_node()
 
     def tmp(self):
         before_action = self.get_current_traversal_node()   # 操作之前的 界面节点
         open_list = before_action.get_open()  # 获取操作之前的未执行过的操作
         if open_list:  # 如果不为空，就执行操作
-            window_node = open_list[0]
-            if self.do_action(action=window_node):
-                before_action.move_to_closed(window_node)
-                after_action = self.get_current_traversal_node()
-                if not self.is_current_window_legal():
+            window_node = open_list[0]  # 获取第一个节点元素
+            if self.do_action(action=window_node):  # 判断操作是否成功
+                before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
+                after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
+                if not self.is_current_window_legal(): #  判断当前节点是否合法 可能以后会在判断过程中把一些ALLOW的提醒点掉
                     Utility.output_msg('Current window is illegal.')
-                    return after_action.init_open([])
-                if before_action is after_action:
+                    after_action.init_open([]) # 如果是非法的 则将这个节点里面的操作节点全部初始化为空
+                    return
+                if before_action is after_action:  # 判断节点是否为同一个
                     Utility.output_msg('Interface is not changed')
                 else:
                     Utility.output_msg('Interface has changed')
-                    after_action.append_previous({before_action.get_node_eigenvalue(): window_node})
-                    before_action.append_next({after_action.get_node_eigenvalue(): window_node})
+                    after_action.append_previous({before_action.get_node_eigenvalue(): window_node})  # 操作的后的节点添加前继
+                    before_action.append_next({after_action.get_node_eigenvalue(): window_node})  # 操作后的节点添加后继
+            else:
+                Utility.output_msg('Do Action Fail: %s' % str(window_node))
         else:  # 否则的话 就什么都不做了
             Utility.output_msg('%s' % before_action.get_node_eigenvalue())
             Utility.output_msg('All operations of current dump window have been completed')
@@ -176,6 +125,7 @@ class Debug(object):
             current_traversal_node = TraversalNode(current_eigenvalue)
             current_traversal_node.init_open(current_window_nodes)
             self.dict_traversal_node[current_eigenvalue] = current_traversal_node
+            self.list_eigenvalue.append(current_eigenvalue)
         else:
             current_traversal_node = self.dict_traversal_node.get(current_eigenvalue)
         return current_traversal_node
@@ -195,11 +145,16 @@ class Debug(object):
                 dict_tmp[GlobalVariable.dict_selector.get(key)] = key_value
         return dict_tmp
 
-    def is_over(self):
-        for value in self.dict_traversal_node.values():
-            if value.get_open():
-                return False
-        return True
+    def get_not_complete_node(self):
+        for eigenvalue in self.list_eigenvalue:
+            traversal_node = self.dict_traversal_node.get(eigenvalue)
+            open_list = traversal_node.get_open()
+            if open_list:
+                Utility.output_msg('Node: %s still has some nodes not be traversed' % traversal_node.get_node_eigenvalue())
+                for i in open_list:
+                    Utility.output_msg('\t%s' % str(i))
+            return traversal_node
+        return False
 
     def is_current_window_legal(self):
         if self.device.get_current_package_name() == self.package_name:
