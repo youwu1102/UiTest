@@ -25,7 +25,8 @@ class GlobalVariable(object):
     dict_selector = {'text': 'text',
                      'resource-id': 'resourceId',
                      'content-desc': 'description',
-                     'class': 'className'}
+                     'class': 'className',
+                     'index': 'index'}
 
     # ===============================================
 

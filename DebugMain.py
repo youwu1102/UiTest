@@ -78,7 +78,7 @@ class Debug(object):
 
 
     def calculated_path(self, current, target):
-        
+        pass
 
     def do_action(self, action):
         option = action.get('action')
