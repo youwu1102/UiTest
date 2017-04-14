@@ -41,8 +41,9 @@ class Debug(object):
         while True:
             Utility.output_msg('=================================================================')
             eigenvalue = self.get_not_complete_node()
+            print eigenvalue
             if eigenvalue:# 判断是否全部结束了 没有再出现新节点
-                self.enter_to_except_location(eigenvalue)  #
+                self.go_to_target(target=eigenvalue)  #
                 self.tmp() #
             else:
                 Utility.output_msg('All locations have been traversed.')
@@ -75,10 +76,23 @@ class Debug(object):
         else:
             self.calculated_path(current=current, target=expect_location)
 
-
-
     def calculated_path(self, current, target):
-        pass
+        if current == target:
+            return []
+        current_node = self.dict_traversal_node.get(current)
+        target_node = self.dict_traversal_node.get(target)
+        print  "============================================================="
+        print  "============================================================="
+
+        print current_node.get_previous()
+        print target_node.get_previous()
+
+
+    def go_to_target(self, target):
+        current = self.get_current_eigenvalue()
+        print current
+        print target
+        self.calculated_path(current=current, target=target)
 
     def do_action(self, action):
         option = action.get('action')
@@ -153,7 +167,7 @@ class Debug(object):
                 Utility.output_msg('Node: %s still has some nodes not be traversed' % traversal_node.get_node_eigenvalue())
                 for i in open_list:
                     Utility.output_msg('\t%s' % str(i))
-            return traversal_node
+            return traversal_node.get_node_eigenvalue()
         return False
 
     def is_current_window_legal(self):
