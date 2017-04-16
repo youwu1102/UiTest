@@ -22,4 +22,5 @@
 	<class id="19" name="android.support.v4.widget.DrawerLayout" type="common" />
 	<class id="20" name="android.appwidget.AppWidgetHostView" type="common" />
 	<class id="21" name="com.android.inputmethod.keyboard.Key" type="common" />
+	<class id="22" name="android.widget.Switch" type="common" />
 	</root>
