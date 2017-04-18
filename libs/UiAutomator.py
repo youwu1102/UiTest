@@ -80,5 +80,5 @@ class UiAutomator(object):
 
 if __name__ == '__main__':
     ui = UiAutomator()
-    print ui.click(**{'className': u'android.widget.TextView', 'index': u'1', 'resourceId': u'com.android.contacts:id/menu_search', 'description': u'Search', 'text': u''})
-
+    #print ui.click(**{'className': u'android.widget.TextView', 'index': u'1', 'resourceId': u'com.android.contacts:id/menu_search', 'description': u'Search', 'text': u''})
+    print ui.get_current_package_name()

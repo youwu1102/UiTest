@@ -23,4 +23,6 @@
 	<class id="20" name="android.appwidget.AppWidgetHostView" type="common" />
 	<class id="21" name="com.android.inputmethod.keyboard.Key" type="common" />
 	<class id="22" name="android.widget.Switch" type="common" />
+	<class id="23" name="android.widget.MultiAutoCompleteTextView" type="common" />
+	<class id="24" name="android.widget.GridView" type="common" />
 	</root>

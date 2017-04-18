@@ -19,7 +19,7 @@ class TraversalNode(object):
     def append_next(self, next):
         if next:
             Utility.output_msg('\"%s\" node will append %s as next.' % (self.get_node_eigenvalue(), str(next)))
-            self.__previous.append(next)
+            self.__next.append(next)
         else:
             Utility.output_msg('Next is None', 'e')
 
@@ -27,11 +27,8 @@ class TraversalNode(object):
         self.__open = window_nodes
 
     def move_to_closed(self, element):
-        print self.__closed
         self.__open.remove(element)
         self.__closed.append(element)
-        print self.__closed
-
 
     def get_open(self):
         return self.__open
