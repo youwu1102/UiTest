@@ -84,17 +84,19 @@ class Debug(object):
     def calculated_path(self, current, target):
         dict_previous = dict()
         dict_next = dict()
-        if self.__find_in_next(current=current, target=target, dict_path=dict_next):
+
+        self.__find_in_next(target=target, dict_path=dict_next)
+        print dict_next
+        if current in dict_next:
             print 'next'
             return self.__go_next(dict_next=dict_next,target=target)
-        print 'line 90'
-        print dict_next
-        if self.__find_in_previous(current=current, target=target, dict_path=dict_previous):
-            print 'previous'
-            if self.return_to_expect_location(target):
-                return True
-        print 'line 96'
+
+        self.__find_in_previous(current=current, dict_path=dict_previous)
         print dict_previous
+        if target in dict_previous:
+            print 'previous'
+            return self.return_to_expect_location(target)
+
         brother_result = self.__find_in_brother(current=current, target=target, dict_previous=dict_previous, dict_next=dict_next)
         if brother_result:
             print 'brother'
@@ -114,21 +116,19 @@ class Debug(object):
         else:
             return True
 
-    def __find_in_previous(self, target, current, dict_path):
+    def __find_in_previous(self, current, dict_path):
         current_node = self.dict_traversal_node.get(current)
+        while current_node is None:
+            self.device.press_back()
+            current_node = self.get_current_traversal_node()
+
         for e, a in current_node.get_previous():
             if e in dict_path.keys():  # 如果PATH LIST已经包含了这个路径  那么认为这是一条重复路径则不进行下去了
                 continue
             else:
                 dict_path[e] = a
-                if target == e:
-                    Utility.output_msg('I find target: ##%s## is ##%s##\'s previous' % (target, current))
-                    return True
-                else:
-                    if self.__find_in_previous(current=e, target=target, dict_path=dict_path):
-                        return True
-        Utility.output_msg('I can not find target in node: ##%s##\'s previous' % current, 'w')
-        return False
+                self.__find_in_previous(current=e, dict_path=dict_path)
+
 
     def __find_in_next(self, target, dict_path):
         target_node = self.dict_traversal_node.get(target)
@@ -137,9 +137,7 @@ class Debug(object):
                 continue
             else:
                 dict_path[e] = a
-                    if self.__find_in_next(current=e, target=target, dict_path=dict_path):
-                        return True
-        Utility.output_msg('I can not find target in node: ##%s##\'s previous' % current, 'w')
+                self.__find_in_next(target=e, dict_path=dict_path)
 
     def __find_in_brother(self, current, target, dict_previous,dict_next):
         for key in dict_previous.keys():
@@ -215,7 +213,7 @@ class Debug(object):
             current_traversal_node.init_open(current_window_nodes)
             self.dict_traversal_node[current_eigenvalue] = current_traversal_node
             self.list_eigenvalue.append(current_eigenvalue)
-            os.rename(self.current_dump_screenshot,self.current_dump_screenshot.replace('.png', '.%s.png' % current_eigenvalue).replace('<','[').replace('>', ']'))
+            #os.rename(self.current_dump_screenshot,self.current_dump_screenshot.replace('.png', '.%s.png' % current_eigenvalue).replace('<','[').replace('>', ']'))
         else:
             current_traversal_node = self.dict_traversal_node.get(current_eigenvalue)
         return current_traversal_node
@@ -252,7 +250,7 @@ class Debug(object):
         return False
 
 if __name__ == '__main__':
-    package_name1 = "com.android.contacts"
+    #package_name1 = "com.android.contacts"
     package_name1 = "com.android.mms"
     d = Debug(project='SDM660', package_name=package_name1)
     d.main()
