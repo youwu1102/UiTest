@@ -26,4 +26,7 @@
 	<class id="23" name="android.widget.MultiAutoCompleteTextView" type="common" />
 	<class id="24" name="android.widget.GridView" type="common" />
 	<class id="25" name="android.widget.CheckedTextView" type="common" />
+	<class id="26" name="android.widget.ProgressBar" type="common" />
+	<class id="27" name="android.widget.ExpandableListView" type="common" />
+	<class id="28" name="android.widget.QuickContactBadge" type="common" />
 	</root>

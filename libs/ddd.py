@@ -1,12 +1,1 @@
-__author__ = 'c_youwu'
-
-a = []
-a = range(10)
-print a
-for x in range(10):
-    print a
-    a[x] = x
-
-print a
-
-
+print u'\u5411\u4e0a\u5bfc\u822a'

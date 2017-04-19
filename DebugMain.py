@@ -19,11 +19,11 @@ class Debug(object):
         self.current_dump = ''
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
-        self.previous_dump_node = None  # 上一个遍历节点
-        self.previous_window_node = None  # 上一个遍历节点里的操作节点
         self.dict_traversal_node = dict()  # 每一个特征值对应一个遍历路径上的节点
         self.list_eigenvalue = list()  # 记录遍历节点出现的顺序
+        self.list_retry_eigenvalue = list()
         self.__count = 0  # 计数器
+        self.__go_next_count = 0
 
     def rename_case_xml(self):
         case_xml = join(self.case_directory, 'Config.xml')
@@ -39,6 +39,7 @@ class Debug(object):
     def main(self):
         self.initialization()
         while True:
+            self.__go_next_count = 0  # 这个参数放置一直重复循环在某一段无法抵达的情况
             Utility.output_msg('======================while True Flag==========================')
             eigenvalue = self.get_not_complete_node()
             Utility.output_msg('%s node has not been fully traversed.' % eigenvalue)
@@ -49,6 +50,8 @@ class Debug(object):
                 Utility.output_msg('All locations have been traversed.')
                 break
 
+    def write_node_config(self):
+        pass
 
     def dump_current_window(self):
         self.__set_current_dump_path()
@@ -103,14 +106,28 @@ class Debug(object):
             Utility.output_msg('I will return to ##%s## first.' % brother_result)
             self.return_to_expect_location(except_location=brother_result)
             return self.__go_next(dict_next=dict_next,target=target)
-
-        Utility.output_msg('当你看到这一行说明算法有问题！！！！！！','e')
+        self.__exceptional_handling(eigenvalue=target)
         return False
 
+    def __exceptional_handling(self, eigenvalue):
+        if eigenvalue in self.list_eigenvalue:
+            self.list_eigenvalue.remove(eigenvalue)
+            self.list_retry_eigenvalue.append(eigenvalue)
+        elif eigenvalue in self.list_retry_eigenvalue:
+            self.list_retry_eigenvalue.remove(eigenvalue)
+        else:
+            Utility.output_msg('Fun:__exceptional_handling', 'e')
+
     def __go_next(self, dict_next, target):
-        print dict_next
+        if self.__go_next_count > 20:
+            self.__exceptional_handling(eigenvalue=target)
+            return True
+        self.__go_next_count += 1
         current = self.get_current_eigenvalue()
         if current != target:
+            if dict_next.get(current) is None:
+                Utility.output_msg('I can not get next step')
+                return False
             self.do_action(dict_next.get(current))
             self.__go_next(dict_next=dict_next, target=target)
         else:
@@ -208,10 +225,11 @@ class Debug(object):
     def get_current_traversal_node(self):  # 获取当前界面的节点
         self.dump_current_window()
         current_eigenvalue, current_window_nodes = Analysis.get_info_from_dump(self.current_dump)
-        if current_eigenvalue not in self.dict_traversal_node:
+        if current_eigenvalue not in self.dict_traversal_node.keys():
             current_traversal_node = TraversalNode(current_eigenvalue)
             current_traversal_node.init_open(current_window_nodes)
             self.dict_traversal_node[current_eigenvalue] = current_traversal_node
+            print 'I will append %s' % current_eigenvalue
             self.list_eigenvalue.append(current_eigenvalue)
             #os.rename(self.current_dump_screenshot,self.current_dump_screenshot.replace('.png', '.%s.png' % current_eigenvalue).replace('<','[').replace('>', ']'))
         else:
@@ -242,6 +260,14 @@ class Debug(object):
                 for i in open_list:
                     Utility.output_msg('\t%s' % str(i), level='d')
                 return traversal_node.get_node_eigenvalue()
+        for eigenvalue in self.list_retry_eigenvalue:
+            traversal_node = self.dict_traversal_node.get(eigenvalue)
+            open_list = traversal_node.get_open()
+            if open_list:
+                Utility.output_msg('Node: %s still has %s node(s) not be traversed' % (traversal_node.get_node_eigenvalue(), len(open_list)))
+                for i in open_list:
+                    Utility.output_msg('\t%s' % str(i), level='d')
+                return traversal_node.get_node_eigenvalue()
         return False
 
     def is_current_window_legal(self):
@@ -250,7 +276,7 @@ class Debug(object):
         return False
 
 if __name__ == '__main__':
-    #package_name1 = "com.android.contacts"
+    package_name1 = "com.android.contacts"
     package_name1 = "com.android.mms"
     d = Debug(project='SDM660', package_name=package_name1)
     d.main()
