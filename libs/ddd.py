@@ -1,1 +1,4 @@
-print u'\u5411\u4e0a\u5bfc\u822a'
+
+import os
+
+os.rename('C:\\1\\tmp_vio_1\\frame_00000.grayscale.pgm','\\\\dine\\QCT_APSS_APT\\APT_SH\\APT_LA\\02LAPT\\Stability\\06-UIStress\\1.pgm')

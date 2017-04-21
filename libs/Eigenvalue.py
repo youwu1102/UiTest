@@ -94,14 +94,14 @@ class Eigenvalue(object):
     @staticmethod
     def __get_child(parent):
         if parent.nodeType != Node.TEXT_NODE:
-            sequence = '<'
+            sequence = '['
             class_name = parent.getAttribute("class")
             if class_name:
                 sequence += Eigenvalue.__convert_class_name_to_id(class_name)
             children = parent.childNodes
             for child in children:
                 sequence += Eigenvalue.__get_child(child)
-            return sequence + '>'
+            return sequence + ']'
         return ''
 
     @staticmethod

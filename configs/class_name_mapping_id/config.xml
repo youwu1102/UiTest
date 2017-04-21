@@ -29,4 +29,8 @@
 	<class id="26" name="android.widget.ProgressBar" type="common" />
 	<class id="27" name="android.widget.ExpandableListView" type="common" />
 	<class id="28" name="android.widget.QuickContactBadge" type="common" />
+	<class id="29" name="android.support.v7.app.ActionBar$Tab" type="common" />
+	<class id="30" name="android.support.v7.widget.LinearLayoutCompat" type="common" />
+	<class id="31" name="android.widget.RadialTimePickerView$RadialPickerTouchHelper" type="common" />
+	<class id="32" name="android.widget.NumberPicker" type="common" />
 	</root>

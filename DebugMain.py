@@ -6,7 +6,7 @@ from libs.TraversalNode import TraversalNode
 from libs.Dump import Analysis
 from os.path import join
 import os
-
+from xml.dom.minidom import Document
 
 class Debug(object):
     def __init__(self, project, package_name, serial=None):
@@ -15,7 +15,7 @@ class Debug(object):
         self.device = UiAutomator(serial)
         self.log_directory = Utility.make_dirs(join(GlobalVariable.logs_directory, package_name))
         self.case_directory = Utility.make_dirs(join(GlobalVariable.case_utils, project, package_name))
-        self.case_xml = self.rename_case_xml()
+        self.case_xml = join(self.case_directory, 'Config.xml')
         self.current_dump = ''
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
@@ -23,23 +23,22 @@ class Debug(object):
         self.list_eigenvalue = list()  # 记录遍历节点出现的顺序
         self.list_retry_eigenvalue = list()
         self.__count = 0  # 计数器
-        self.__go_next_count = 0
+        self.go_next_count = 0
 
     def rename_case_xml(self):
-        case_xml = join(self.case_directory, 'Config.xml')
-        if os.path.exists(case_xml):
+        if os.path.exists(self.case_xml):
             Utility.output_msg('I find an old config file for %s, I will generate a new one.')
             for x in xrange(1, 10000):
                 back_case_xml = join(self.case_directory, 'Config.xml.back%s' % x)
                 if not os.path.exists(back_case_xml):
-                    os.rename(case_xml, back_case_xml)
+                    os.rename(self.case_xml, back_case_xml)
                     break
-        return case_xml
+        return self.case_xml
 
     def main(self):
         self.initialization()
         while True:
-            self.__go_next_count = 0  # 这个参数放置一直重复循环在某一段无法抵达的情况
+            self.go_next_count = 0  # 这个参数放置一直重复循环在某一段无法抵达的情况
             Utility.output_msg('======================while True Flag==========================')
             eigenvalue = self.get_not_complete_node()
             Utility.output_msg('%s node has not been fully traversed.' % eigenvalue)
@@ -49,9 +48,36 @@ class Debug(object):
             else:
                 Utility.output_msg('All locations have been traversed.')
                 break
+        self.write_node_config()
 
     def write_node_config(self):
-        pass
+        config_xml = self.rename_case_xml()
+        doc = Document()
+        root = doc.createElement('Root')
+        for value in self.dict_traversal_node.values():
+            node = doc.createElement('Node')
+            node.setAttribute('eigenvalue', value.get_node_eigenvalue())
+            next_list = value.get_next()
+            previous_list = value.get_previous()
+            if next_list:
+                for next in next_list:
+                    print str(next)
+                    next_node = doc.createElement('Next')
+                    next_node.setAttribute('eigenvalue', next[0])
+                    next_node.setAttribute('action', str(next[1]))
+                    node.appendChild(next_node)
+            if previous_list:
+                for previous in previous_list:
+                    print str(previous)
+                    next_node = doc.createElement('Previous')
+                    next_node.setAttribute('eigenvalue', previous[0])
+                    next_node.setAttribute('action', str(previous[1]))
+                    node.appendChild(next_node)
+            root.appendChild(node)
+        doc.appendChild(root)
+        f = open(config_xml, 'w')
+        f.write(doc.toprettyxml(indent='',encoding='utf-8'))
+        f.close()
 
     def dump_current_window(self):
         self.__set_current_dump_path()
@@ -89,13 +115,11 @@ class Debug(object):
         dict_next = dict()
 
         self.__find_in_next(target=target, dict_path=dict_next)
-        print dict_next
         if current in dict_next:
             print 'next'
             return self.__go_next(dict_next=dict_next,target=target)
 
         self.__find_in_previous(current=current, dict_path=dict_previous)
-        print dict_previous
         if target in dict_previous:
             print 'previous'
             return self.return_to_expect_location(target)
@@ -119,10 +143,10 @@ class Debug(object):
             Utility.output_msg('Fun:__exceptional_handling', 'e')
 
     def __go_next(self, dict_next, target):
-        if self.__go_next_count > 20:
+        if self.go_next_count > 20:
             self.__exceptional_handling(eigenvalue=target)
             return True
-        self.__go_next_count += 1
+        self.go_next_count += 1
         current = self.get_current_eigenvalue()
         if current != target:
             if dict_next.get(current) is None:
@@ -188,7 +212,8 @@ class Debug(object):
         open_list = before_action.get_open()  # 获取操作之前的未执行过的操作
         if open_list:  # 如果不为空，就执行操作
             window_node = open_list[0]  # 获取第一个节点元素
-            if self.do_action(action=window_node):  # 判断操作是否成功
+            action_result = self.do_action(action=window_node)
+            if action_result:  # 判断操作是否成功
                 before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
                 after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
                 if not self.is_current_window_legal(): #  判断当前节点是否合法 可能以后会在判断过程中把一些ALLOW的提醒点掉
@@ -278,5 +303,6 @@ class Debug(object):
 if __name__ == '__main__':
     package_name1 = "com.android.contacts"
     package_name1 = "com.android.mms"
+    package_name1 = "com.android.deskclock"
     d = Debug(project='SDM660', package_name=package_name1)
     d.main()
