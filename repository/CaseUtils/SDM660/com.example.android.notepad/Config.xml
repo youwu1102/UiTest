@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Root>
+	<Node eigenvalue="[aa[AF[ak[ab]][ak[ab]]]]">
+		<Previous>
+			<Info action="{'index': u'1', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'true', 'enabled': u'true', 'bounds': u'[1293,112][1440,280]', 'content-desc': u'More options', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.ImageButton', 'scrollable': u'false'}" eigenvalue="[aa[ab][ac][ak[ab]][al]]"/>
+		</Previous>
+		<All>
+			<Info action="{'index': u'0', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'false', 'enabled': u'false', 'bounds': u'[740,112][1426,280]', 'content-desc': u'', 'focusable': u'false', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.LinearLayout', 'scrollable': u'false'}"/>
+			<Info action="{'index': u'1', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'false', 'enabled': u'false', 'bounds': u'[740,280][1426,448]', 'content-desc': u'', 'focusable': u'false', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.LinearLayout', 'scrollable': u'false'}"/>
+		</All>
+	</Node>
+	<Node eigenvalue="[aa[ac][ab][ab][am]]">
+		<Next>
+			<Info action="{'index': u'0', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'false', 'enabled': u'true', 'bounds': u'[0,98][196,294]', 'content-desc': u'Navigate up', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.ImageButton', 'scrollable': u'false'}" eigenvalue="[aa[ab][ac][ak[ab]][al]]"/>
+			<Info action="{'index': u'2', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'true', 'enabled': u'true', 'bounds': u'[1272,112][1440,280]', 'content-desc': u'Delete', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.TextView', 'scrollable': u'false'}" eigenvalue="[aa[ab][ac][ak[ab]][al]]"/>
+		</Next>
+		<Previous>
+			<Info action="{'index': u'3', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'false', 'enabled': u'true', 'bounds': u'[1118,2000][1398,2280]', 'content-desc': u'', 'focusable': u'false', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'com.example.android.notepad:id/add_note', 'password': u'false', 'class': u'android.widget.ImageView', 'scrollable': u'false'}" eigenvalue="[aa[ab][ac][ak[ab]][al]]"/>
+		</Previous>
+		<All>
+			<Info action="{'index': u'0', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'false', 'enabled': u'true', 'bounds': u'[0,98][196,294]', 'content-desc': u'Navigate up', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.ImageButton', 'scrollable': u'false'}"/>
+			<Info action="{'index': u'2', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'true', 'enabled': u'true', 'bounds': u'[1272,112][1440,280]', 'content-desc': u'Delete', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.TextView', 'scrollable': u'false'}"/>
+			<Info action="{'index': u'3', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'true', 'enabled': u'true', 'bounds': u'[70,350][1370,496]', 'content-desc': u'', 'focusable': u'true', 'focused': u'true', 'checkable': u'false', 'action': 'Click', 'resource-id': u'com.example.android.notepad:id/note', 'password': u'false', 'class': u'android.widget.EditText', 'scrollable': u'false'}"/>
+		</All>
+	</Node>
+	<Node eigenvalue="[aa[ab][ac][ak[ab]][al]]">
+		<Next>
+			<Info action="{'index': u'1', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'true', 'enabled': u'true', 'bounds': u'[1293,112][1440,280]', 'content-desc': u'More options', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.ImageButton', 'scrollable': u'false'}" eigenvalue="[aa[AF[ak[ab]][ak[ab]]]]"/>
+			<Info action="{'index': u'3', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'false', 'enabled': u'true', 'bounds': u'[1118,2000][1398,2280]', 'content-desc': u'', 'focusable': u'false', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'com.example.android.notepad:id/add_note', 'password': u'false', 'class': u'android.widget.ImageView', 'scrollable': u'false'}" eigenvalue="[aa[ac][ab][ab][am]]"/>
+		</Next>
+		<Previous>
+			<Info action="{'index': u'0', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'false', 'enabled': u'true', 'bounds': u'[0,98][196,294]', 'content-desc': u'Navigate up', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.ImageButton', 'scrollable': u'false'}" eigenvalue="[aa[ac][ab][ab][am]]"/>
+			<Info action="{'index': u'2', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'true', 'enabled': u'true', 'bounds': u'[1272,112][1440,280]', 'content-desc': u'Delete', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.TextView', 'scrollable': u'false'}" eigenvalue="[aa[ac][ab][ab][am]]"/>
+		</Previous>
+		<All>
+			<Info action="{'index': u'1', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'true', 'enabled': u'true', 'bounds': u'[1293,112][1440,280]', 'content-desc': u'More options', 'focusable': u'true', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'', 'password': u'false', 'class': u'android.widget.ImageButton', 'scrollable': u'false'}"/>
+			<Info action="{'index': u'3', 'selected': u'false', 'checked': u'false', 'clickable': u'true', 'package': u'com.example.android.notepad', 'text': u'', 'long-clickable': u'false', 'enabled': u'true', 'bounds': u'[1118,2000][1398,2280]', 'content-desc': u'', 'focusable': u'false', 'focused': u'false', 'checkable': u'false', 'action': 'Click', 'resource-id': u'com.example.android.notepad:id/add_note', 'password': u'false', 'class': u'android.widget.ImageView', 'scrollable': u'false'}"/>
+		</All>
+	</Node>
+</Root>

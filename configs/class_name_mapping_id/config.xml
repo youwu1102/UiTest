@@ -33,4 +33,7 @@
 	<class id="30" name="android.support.v7.widget.LinearLayoutCompat" type="common" />
 	<class id="31" name="android.widget.RadialTimePickerView$RadialPickerTouchHelper" type="common" />
 	<class id="32" name="android.widget.NumberPicker" type="common" />
+	<class id="33" name="android.widget.RadioGroup" type="common" />
+	<class id="34" name="android.widget.TabHost" type="common" />
+	<class id="35" name="com.tencent.qqlive.views.hlistview.widget.HListView" type="common" />
 	</root>

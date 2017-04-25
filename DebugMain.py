@@ -9,9 +9,12 @@ import os
 from xml.dom.minidom import Document
 
 class Debug(object):
-    def __init__(self, project, package_name, serial=None):
+    def __init__(self, project, package_name, serial=None, activity_name=''):
         self.project = project
         self.package_name = package_name
+        self.process_name = package_name
+        if activity_name:
+            self.process_name = '{package}/{activity}'.format(package=package_name, activity=activity_name)
         self.device = UiAutomator(serial)
         self.log_directory = Utility.make_dirs(join(GlobalVariable.logs_directory, package_name))
         self.case_directory = Utility.make_dirs(join(GlobalVariable.case_utils, project, package_name))
@@ -22,7 +25,7 @@ class Debug(object):
         self.dict_traversal_node = dict()  # 每一个特征值对应一个遍历路径上的节点
         self.list_eigenvalue = list()  # 记录遍历节点出现的顺序
         self.list_retry_eigenvalue = list()
-        self.__count = 0  # 计数器
+        self.count = 0  # 计数器
         self.go_next_count = 0
 
     def rename_case_xml(self):
@@ -59,20 +62,33 @@ class Debug(object):
             node.setAttribute('eigenvalue', value.get_node_eigenvalue())
             next_list = value.get_next()
             previous_list = value.get_previous()
+            closed_list = value.get_closed()
             if next_list:
-                for next in next_list:
-                    print str(next)
-                    next_node = doc.createElement('Next')
-                    next_node.setAttribute('eigenvalue', next[0])
-                    next_node.setAttribute('action', str(next[1]))
-                    node.appendChild(next_node)
+                next_node = doc.createElement('Next')
+                for _next in next_list:
+                    print str(_next)
+                    tmp = doc.createElement('Info')
+                    tmp.setAttribute('eigenvalue', _next[0])
+                    tmp.setAttribute('action', str(_next[1]))
+                    next_node.appendChild(tmp)
+                node.appendChild(next_node)
             if previous_list:
-                for previous in previous_list:
-                    print str(previous)
-                    next_node = doc.createElement('Previous')
-                    next_node.setAttribute('eigenvalue', previous[0])
-                    next_node.setAttribute('action', str(previous[1]))
-                    node.appendChild(next_node)
+                previous_node = doc.createElement('Previous')
+                for _previous in previous_list:
+                    print str(_previous)
+                    tmp = doc.createElement('Info')
+                    tmp.setAttribute('eigenvalue', _previous[0])
+                    tmp.setAttribute('action', str(_previous[1]))
+                    previous_node.appendChild(tmp)
+                node.appendChild(previous_node)
+            if closed_list:
+                closed_node = doc.createElement('All')
+                for _closed in closed_list:
+                    print str(_closed)
+                    tmp = doc.createElement('Info')
+                    tmp.setAttribute('action', str(_closed))
+                    closed_node.appendChild(tmp)
+                node.appendChild(closed_node)
             root.appendChild(node)
         doc.appendChild(root)
         f = open(config_xml, 'w')
@@ -80,7 +96,7 @@ class Debug(object):
         f.close()
 
     def dump_current_window(self):
-        self.__set_current_dump_path()
+        self.set_current_dump_path()
         self.device.dump(self.current_dump)
         self.device.screenshot(self.current_dump_screenshot)
 
@@ -95,7 +111,7 @@ class Debug(object):
             Utility.output_msg('Current window is not the except window,press back key.')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
-                Utility.start_process_on_device(self.package_name)
+                Utility.start_process_on_device(self.process_name)
                 if self.get_current_eigenvalue() == except_location:
                     return True
                 return False
@@ -114,26 +130,27 @@ class Debug(object):
         dict_previous = dict()
         dict_next = dict()
 
-        self.__find_in_next(target=target, dict_path=dict_next)
+        self.find_in_next(target=target, dict_path=dict_next)
         if current in dict_next:
             print 'next'
-            return self.__go_next(dict_next=dict_next,target=target)
+            return self.go_next(dict_next=dict_next,target=target)
 
-        self.__find_in_previous(current=current, dict_path=dict_previous)
+        self.find_in_previous(current=current, dict_path=dict_previous)
         if target in dict_previous:
             print 'previous'
             return self.return_to_expect_location(target)
 
-        brother_result = self.__find_in_brother(current=current, target=target, dict_previous=dict_previous, dict_next=dict_next)
+        brother_result = self.find_in_brother(current=current, target=target, dict_previous=dict_previous, dict_next=dict_next)
         if brother_result:
             print 'brother'
             Utility.output_msg('I will return to ##%s## first.' % brother_result)
             self.return_to_expect_location(except_location=brother_result)
-            return self.__go_next(dict_next=dict_next,target=target)
-        self.__exceptional_handling(eigenvalue=target)
+            return self.go_next(dict_next=dict_next,target=target)
+        self.exceptional_handling(eigenvalue=target)
         return False
 
-    def __exceptional_handling(self, eigenvalue):
+    def exceptional_handling(self, eigenvalue):
+        self.device.press_back()
         if eigenvalue in self.list_eigenvalue:
             self.list_eigenvalue.remove(eigenvalue)
             self.list_retry_eigenvalue.append(eigenvalue)
@@ -142,9 +159,9 @@ class Debug(object):
         else:
             Utility.output_msg('Fun:__exceptional_handling', 'e')
 
-    def __go_next(self, dict_next, target):
+    def go_next(self, dict_next, target):
         if self.go_next_count > 20:
-            self.__exceptional_handling(eigenvalue=target)
+            self.exceptional_handling(eigenvalue=target)
             return True
         self.go_next_count += 1
         current = self.get_current_eigenvalue()
@@ -153,11 +170,11 @@ class Debug(object):
                 Utility.output_msg('I can not get next step')
                 return False
             self.do_action(dict_next.get(current))
-            self.__go_next(dict_next=dict_next, target=target)
+            self.go_next(dict_next=dict_next, target=target)
         else:
             return True
 
-    def __find_in_previous(self, current, dict_path):
+    def find_in_previous(self, current, dict_path):
         current_node = self.dict_traversal_node.get(current)
         while current_node is None:
             self.device.press_back()
@@ -168,19 +185,19 @@ class Debug(object):
                 continue
             else:
                 dict_path[e] = a
-                self.__find_in_previous(current=e, dict_path=dict_path)
+                self.find_in_previous(current=e, dict_path=dict_path)
 
 
-    def __find_in_next(self, target, dict_path):
+    def find_in_next(self, target, dict_path):
         target_node = self.dict_traversal_node.get(target)
         for e, a in target_node.get_previous():
             if e in dict_path.keys():  # 如果PATH LIST已经包含了这个路径  那么认为这是一条重复路径则不进行下去了
                 continue
             else:
                 dict_path[e] = a
-                self.__find_in_next(target=e, dict_path=dict_path)
+                self.find_in_next(target=e, dict_path=dict_path)
 
-    def __find_in_brother(self, current, target, dict_previous,dict_next):
+    def find_in_brother(self, current, target, dict_previous,dict_next):
         for key in dict_previous.keys():
             if key in dict_next.keys():
                 return key
@@ -234,7 +251,7 @@ class Debug(object):
                 after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
                 if not self.is_current_window_legal(): #  判断当前节点是否合法 可能以后会在判断过程中把一些ALLOW的提醒点掉
                     Utility.output_msg('Current window is illegal.')
-                    after_action.init_open([]) # 如果是非法的 则将这个节点里面的操作节点全部初始化为空
+                    after_action.init_open([])  # 如果是非法的 则将这个节点里面的操作节点全部初始化为空
                     return
                 if before_action is after_action:  # 判断节点是否为同一个
                     Utility.output_msg('Interface is not changed')
@@ -261,11 +278,11 @@ class Debug(object):
             current_traversal_node = self.dict_traversal_node.get(current_eigenvalue)
         return current_traversal_node
 
-    def __set_current_dump_path(self):  # 更新最新的dump路径，每次调用自动加1
-        self.current_dump = join(self.log_directory, '%04d.uix' % self.__count)
-        self.current_dump_screenshot = join(self.log_directory, '%04d.png' % self.__count)
-        self.current_dump_txt = join(self.log_directory, '%04d.txt' % self.__count)
-        self.__count += 1
+    def set_current_dump_path(self):  # 更新最新的dump路径，每次调用自动加1
+        self.current_dump = join(self.log_directory, '%04d.uix' % self.count)
+        self.current_dump_screenshot = join(self.log_directory, '%04d.png' % self.count)
+        self.current_dump_txt = join(self.log_directory, '%04d.txt' % self.count)
+        self.count += 1
 
     @classmethod
     def get_selector(cls, action):
@@ -301,8 +318,11 @@ class Debug(object):
         return False
 
 if __name__ == '__main__':
-    package_name1 = "com.android.contacts"
-    package_name1 = "com.android.mms"
-    package_name1 = "com.android.deskclock"
-    d = Debug(project='SDM660', package_name=package_name1)
+    # package_name1 = "com.android.contacts"
+    package_name = "com.android.mms"
+    # package_name1 = "com.android.deskclock"
+    #package_name = "com.example.android.notepad"
+    #activity_name = '.NotesList'
+    activity_name=''
+    d = Debug(project='SDM660', package_name=package_name,activity_name=activity_name)
     d.main()
