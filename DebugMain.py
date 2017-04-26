@@ -53,6 +53,26 @@ class Debug(object):
                 break
         self.write_node_config()
 
+    def __establish_node1(self, nodes, element_name, doc):
+        xml_node = doc.createElement(element_name)
+        for _node in nodes:
+            print str(_node)
+            _tmp = doc.createElement('Info')
+            _tmp.setAttribute('action', str(_node))
+            xml_node.appendChild(_tmp)
+        return xml_node
+
+    def __establish_node2(self, nodes, element_name, doc):
+        xml_node = doc.createElement(element_name)
+        for _node in nodes:
+            print str(_node)
+            _tmp = doc.createElement('Info')
+            _tmp.setAttribute('eigenvalue', _node[0])
+            _tmp.setAttribute('action', str(_node[1]))
+            xml_node.appendChild(_tmp)
+        return xml_node
+
+
     def write_node_config(self):
         config_xml = self.rename_case_xml()
         doc = Document()
@@ -63,36 +83,19 @@ class Debug(object):
             next_list = value.get_next()
             previous_list = value.get_previous()
             closed_list = value.get_closed()
+            optional_list = value.get_optional()
             if next_list:
-                next_node = doc.createElement('Next')
-                for _next in next_list:
-                    print str(_next)
-                    tmp = doc.createElement('Info')
-                    tmp.setAttribute('eigenvalue', _next[0])
-                    tmp.setAttribute('action', str(_next[1]))
-                    next_node.appendChild(tmp)
-                node.appendChild(next_node)
+                node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Next'), doc=doc)
             if previous_list:
-                previous_node = doc.createElement('Previous')
-                for _previous in previous_list:
-                    print str(_previous)
-                    tmp = doc.createElement('Info')
-                    tmp.setAttribute('eigenvalue', _previous[0])
-                    tmp.setAttribute('action', str(_previous[1]))
-                    previous_node.appendChild(tmp)
-                node.appendChild(previous_node)
+                node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Previous'), doc=doc)
             if closed_list:
-                closed_node = doc.createElement('All')
-                for _closed in closed_list:
-                    print str(_closed)
-                    tmp = doc.createElement('Info')
-                    tmp.setAttribute('action', str(_closed))
-                    closed_node.appendChild(tmp)
-                node.appendChild(closed_node)
+                node.appendChild(self.__establish_node1(nodes=closed_list,element_name='All'), doc=doc)
+            if optional_list:
+                node.appendChild(self.__establish_node1(nodes=optional_list,element_name='Optional'), doc=doc)
             root.appendChild(node)
         doc.appendChild(root)
         f = open(config_xml, 'w')
-        f.write(doc.toprettyxml(indent='',encoding='utf-8'))
+        f.write(doc.toprettyxml(indent='', encoding='utf-8'))
         f.close()
 
     def dump_current_window(self):
@@ -216,6 +219,8 @@ class Debug(object):
         selector = self.get_selector(action=action)
         if option == 'Click':
             return self.device.click(**selector)
+        elif option == 'Edit':
+            return self.device.edit(**selector)
         else:
             Utility.output_msg('Unknown option: %s.' % option)
             return False
@@ -230,35 +235,22 @@ class Debug(object):
         if open_list:  # 如果不为空，就执行操作
             window_node = open_list[0]  # 获取第一个节点元素
             action_result = self.do_action(action=window_node)
-            if action_result:  # 判断操作是否成功
-                before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
-                after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
-                if not self.is_current_window_legal(): #  判断当前节点是否合法 可能以后会在判断过程中把一些ALLOW的提醒点掉
-                    Utility.output_msg('Current window is illegal.')
-                    after_action.init_open([]) # 如果是非法的 则将这个节点里面的操作节点全部初始化为空
-                    after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
-                    before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
-                    return
-                if before_action is after_action:  # 判断节点是否为同一个
-                    Utility.output_msg('Interface is not changed')
-                else:
-                    Utility.output_msg('Interface has changed')
-                    after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
-                    before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
+
+            after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
+            if not self.is_current_window_legal(): #  判断当前节点是否合法 可能以后会在判断过程中把一些ALLOW的提醒点掉
+                Utility.output_msg('Current window is illegal.')
+                after_action.init_open([]) # 如果是非法的 则将这个节点里面的操作节点全部初始化为空
+                after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
+                before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
+                return
+            if before_action is after_action:  # 判断节点是否为同一个
+                before_action.move_to_optional(window_node)
+                Utility.output_msg('Interface is not changed')
             else:
-                Utility.output_msg('Do Action Fail: %s' % str(window_node))
                 before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
-                after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
-                if not self.is_current_window_legal(): #  判断当前节点是否合法 可能以后会在判断过程中把一些ALLOW的提醒点掉
-                    Utility.output_msg('Current window is illegal.')
-                    after_action.init_open([])  # 如果是非法的 则将这个节点里面的操作节点全部初始化为空
-                    return
-                if before_action is after_action:  # 判断节点是否为同一个
-                    Utility.output_msg('Interface is not changed')
-                else:
-                    Utility.output_msg('Interface has changed')
-                    after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
-                    before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
+                Utility.output_msg('Interface has changed')
+                after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
+                before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
         else:  # 否则的话 就什么都不做了
             Utility.output_msg('%s' % before_action.get_node_eigenvalue())
             Utility.output_msg('All operations of current dump window have been completed')

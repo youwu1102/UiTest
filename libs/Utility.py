@@ -6,7 +6,8 @@ import re
 from time import sleep
 from ADB import Adb
 from TimeFormat import TimeFormat
-
+import random
+import string
 
 class Utility(object):
     pid_expression = re.compile(r'\d{3,5} ')
@@ -162,9 +163,15 @@ class Utility(object):
         Utility.start_process_on_device(package_name)
         Utility.wait_for_time(1)
 
+    @staticmethod
+    def random_char(length):
+        return ''.join(random.choice(string.letters) for x in range(length))
+
+    @staticmethod
+    def random_number():
+        return str(random.randint(1, 99999999))
 
 
 if __name__ == '__main__':
-    for x in range(10000):
-        aaa = Utility.analysis_dump('C:\\cygwin64\\home\\c_youwu\\UiTest\\logs\\2017_03_27-16_31_38\\com.android.contacts\\2.uix')
+    print Utility.random_char(10)
 

@@ -20,6 +20,9 @@ class Nodes(object):
         if node.get('clickable') == 'true':
             node['action'] = 'Click'
             return False
+        elif node.get('class') == 'android.widget.EditText':
+            node['action'] = 'Edit'
+            return False
 
         # elif 'android.widget.EditText' == node.get('class'):
         #     return False

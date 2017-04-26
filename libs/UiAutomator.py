@@ -26,14 +26,14 @@ class UiAutomator(object):
             return self.device(**kwargs).click()
         except JsonRPCError, e:
             Utility.output_msg(e, 'e')
-            return False
+            return 'Error'
 
     def long_click(self, **kwargs):
         try:
             return self.device(**kwargs).long_click()
         except JsonRPCError, e:
             Utility.output_msg(e, 'e')
-            return False
+            return 'Error'
 
     def scroll(self, vertical, forward, steps=100, **kwargs):
         print vertical
@@ -42,7 +42,10 @@ class UiAutomator(object):
         return self.device(**kwargs).scroll(steps=steps)
 
     def get_current_package_name(self):
-        return self.device.info.get('currentPackageName')
+        try:
+            return self.device.info.get('currentPackageName')
+        except Exception:
+            return self.get_current_package_name()
 
 
         # press key via name or key code. Supported key name includes:
@@ -77,6 +80,16 @@ class UiAutomator(object):
     def press_keycode(self, keycode):
         Utility.output_msg('Input Key Code: %s' % keycode)
         return self.device.press(keycode)
+
+    def edit(self, **kwargs):
+        text = Utility.random_char(10)
+        Utility.output_msg('Edit:%s' % kwargs)
+        Utility.output_msg('Input:%s' % text)
+        try:
+            return self.device(**kwargs).set_text(text)
+        except JsonRPCError, e:
+            Utility.output_msg(e, 'e')
+            return 'Error'
 
 if __name__ == '__main__':
     ui = UiAutomator()
