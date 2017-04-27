@@ -16,6 +16,7 @@ class Stress(Debug):
         Debug.__init__(self, project=project, package_name=package_name, serial=serial)
         self.root_log_folder = Utility.make_dirs(join(GlobalVariable.logs_directory, TimeFormat.timestamp(), package_name))
         self.test_count = 0
+
     def __parse_config(self):
         if os.path.exists(self.case_xml):
             dom = parse(self.case_xml)
@@ -27,6 +28,7 @@ class Stress(Debug):
                 next_list = node.getElementsByTagName('Next')
                 previous_list = node.getElementsByTagName('Previous')
                 closed_list = node.getElementsByTagName('All')
+                optional_list = node.getElementsByTagName('Optional')
                 for next_node in next_list:
                     for info_node in next_node.getElementsByTagName('Info'):
                         tmp_e = info_node.getAttribute('eigenvalue')
@@ -37,6 +39,10 @@ class Stress(Debug):
                         tmp_e = info_node.getAttribute('eigenvalue')
                         tmp_a = info_node.getAttribute('action')
                         traversal_node.append_previous((tmp_e, eval(tmp_a)))
+                for optional_node in optional_list:
+                    for info_node in optional_node.getElementsByTagName('Info'):
+                        tmp_a = info_node.getAttribute('action')
+                        traversal_node.append_optional(eval(tmp_a))
                 for closed_node in closed_list:
                     for info_node in closed_node.getElementsByTagName('Info'):
                         tmp_a = info_node.getAttribute('action')
@@ -45,23 +51,24 @@ class Stress(Debug):
         else:
             Utility.output_msg('I can not find case config file')
 
-
-
-
     def main(self):
         self.__parse_config()
-        list_eigenvalue = self.dict_traversal_node.keys()[:]
         while True:
             self.test_count += 1
             self.log_directory = Utility.make_dirs(join(self.root_log_folder, '%04d' % self.test_count))
             self.go_next_count = 0
             self.count = 0
+            random_traversal_list = self.dict_traversal_node.keys()[:]
             if self.device.get_current_package_name() != self.package_name:
                 Utility.start_process_on_device(self.package_name)
-            self.go_to_target(target=random.choice(list_eigenvalue))  #
-            print '----------------------------------------------'
-            closed_list = self.get_current_traversal_node().get_closed()
+
+            self.go_to_target(target=random.choice(random_traversal_list))  #
+            current_node = self.get_current_traversal_node()
+            closed_list = current_node.get_closed()
+            optional_list = current_node.get_optional()
             if closed_list:
+                # for optional in optional_list:
+                #     self.do_action(optional)
                 self.do_action(random.choice(closed_list))
                 self.set_current_dump_path()
                 self.device.screenshot(self.current_dump_screenshot)
@@ -72,6 +79,9 @@ class Stress(Debug):
         if option == 'Click':
             self.record_path(action='Click', selector=selector)
             return self.device.click(**selector)
+        elif option == 'Edit':
+            self.record_path(action='Edit', selector=selector)
+            return self.device.edit(**selector)
         else:
             Utility.output_msg('Unknown option: %s.' % option)
             return False

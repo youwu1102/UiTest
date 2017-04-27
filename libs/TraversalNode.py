@@ -39,14 +39,16 @@ class TraversalNode(object):
             Utility.output_msg('Optional is None', 'e')
 
     def init_open(self, window_nodes):
-        if not window_nodes and self.__open:
-            self.__closed = self.__open[:]
-        else:
-            for window_node in window_nodes:
-                if window_node.get('action') == 'Click':
-                    self.__open.append(window_node)
-                elif window_node.get('action') == 'Edit':
-                    self.__optional.append(window_node)
+        for window_node in window_nodes:
+            if window_node.get('action') == 'Click':
+                self.__open.append(window_node)
+            elif window_node.get('action') == 'Edit':
+                self.__optional.append(window_node)
+
+    def move_all_open_to_closed(self):
+        self.__closed = self.__open[:]
+        self.__open = []
+
 
     def move_to_optional(self, element):
         self.__open.remove(element)

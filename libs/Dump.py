@@ -17,15 +17,13 @@ class Nodes(object):
 
     @staticmethod
     def __node_useless_rule(node):
-        if node.get('clickable') == 'true':
-            node['action'] = 'Click'
-            return False
-        elif node.get('class') == 'android.widget.EditText':
+        if node.get('class') == 'android.widget.EditText':
             node['action'] = 'Edit'
             return False
+        elif node.get('clickable') == 'true':
+            node['action'] = 'Click'
+            return False
 
-        # elif 'android.widget.EditText' == node.get('class'):
-        #     return False
         return True
 
 

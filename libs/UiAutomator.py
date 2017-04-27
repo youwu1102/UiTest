@@ -91,6 +91,9 @@ class UiAutomator(object):
             Utility.output_msg(e, 'e')
             return 'Error'
 
+    def exists(self, **kwargs):
+        return self.device(**kwargs).exists()
+
 if __name__ == '__main__':
     ui = UiAutomator()
     #print ui.click(**{'className': u'android.widget.TextView', 'index': u'1', 'resourceId': u'com.android.contacts:id/menu_search', 'description': u'Search', 'text': u''})

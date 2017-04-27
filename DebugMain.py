@@ -27,6 +27,7 @@ class Debug(object):
         self.list_retry_eigenvalue = list()
         self.count = 0  # 计数器
         self.go_next_count = 0
+        self.return_count = 0
 
     def rename_case_xml(self):
         if os.path.exists(self.case_xml):
@@ -85,13 +86,13 @@ class Debug(object):
             closed_list = value.get_closed()
             optional_list = value.get_optional()
             if next_list:
-                node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Next'), doc=doc)
+                node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Next', doc=doc))
             if previous_list:
-                node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Previous'), doc=doc)
+                node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Previous', doc=doc))
             if closed_list:
-                node.appendChild(self.__establish_node1(nodes=closed_list,element_name='All'), doc=doc)
+                node.appendChild(self.__establish_node1(nodes=closed_list,element_name='All', doc=doc))
             if optional_list:
-                node.appendChild(self.__establish_node1(nodes=optional_list,element_name='Optional'), doc=doc)
+                node.appendChild(self.__establish_node1(nodes=optional_list,element_name='Optional', doc=doc))
             root.appendChild(node)
         doc.appendChild(root)
         f = open(config_xml, 'w')
@@ -103,7 +104,6 @@ class Debug(object):
         self.device.dump(self.current_dump)
         self.device.screenshot(self.current_dump_screenshot)
 
-
     def get_current_eigenvalue(self):
         self.device.dump('current')
         return Analysis.calculate_eigenvalue('current')
@@ -111,6 +111,7 @@ class Debug(object):
     def return_to_expect_location(self, except_location):  # 返回预期位置
         Utility.output_msg('I want to return to except window.')
         while self.get_current_eigenvalue() != except_location:
+            self.return_count += 1
             Utility.output_msg('Current window is not the except window,press back key.')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
@@ -118,6 +119,8 @@ class Debug(object):
                 if self.get_current_eigenvalue() == except_location:
                     return True
                 return False
+            if self.device.exists(text='OK'):
+                print 'ddddddddddddddddddddd'
         Utility.output_msg('Function return_to_expect_location over.', 'd')
         return True
 
@@ -143,7 +146,7 @@ class Debug(object):
             print 'previous'
             return self.return_to_expect_location(target)
 
-        brother_result = self.find_in_brother(current=current, target=target, dict_previous=dict_previous, dict_next=dict_next)
+        brother_result = self.find_in_brother(dict_previous=dict_previous, dict_next=dict_next)
         if brother_result:
             print 'brother'
             Utility.output_msg('I will return to ##%s## first.' % brother_result)
@@ -200,7 +203,7 @@ class Debug(object):
                 dict_path[e] = a
                 self.find_in_next(target=e, dict_path=dict_path)
 
-    def find_in_brother(self, current, target, dict_previous,dict_next):
+    def find_in_brother(self, dict_previous,dict_next):
         for key in dict_previous.keys():
             if key in dict_next.keys():
                 return key
@@ -235,11 +238,11 @@ class Debug(object):
         if open_list:  # 如果不为空，就执行操作
             window_node = open_list[0]  # 获取第一个节点元素
             action_result = self.do_action(action=window_node)
-
             after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
             if not self.is_current_window_legal(): #  判断当前节点是否合法 可能以后会在判断过程中把一些ALLOW的提醒点掉
+                before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
                 Utility.output_msg('Current window is illegal.')
-                after_action.init_open([]) # 如果是非法的 则将这个节点里面的操作节点全部初始化为空
+                after_action.move_all_open_to_closed() # 如果是非法的 则将这个节点里面的操作节点全部修改到closed状态
                 after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
                 before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
                 return
