@@ -57,6 +57,7 @@ class Stress(Debug):
             self.test_count += 1
             self.log_directory = Utility.make_dirs(join(self.root_log_folder, '%04d' % self.test_count))
             self.go_next_count = 0
+            self.return_count = 0
             self.count = 0
             random_traversal_list = self.dict_traversal_node.keys()[:]
             if self.device.get_current_package_name() != self.package_name:

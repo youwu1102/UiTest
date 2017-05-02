@@ -36,4 +36,7 @@
 	<class id="33" name="android.widget.RadioGroup" type="common" />
 	<class id="34" name="android.widget.TabHost" type="common" />
 	<class id="35" name="com.tencent.qqlive.views.hlistview.widget.HListView" type="common" />
+	<class id="36" name="android.webkit.WebView" type="common" />
+	<class id="37" name="android.widget.Image" type="common" />
+	<class id="38" name="android.widget.SeekBar" type="common" />
 	</root>

@@ -25,14 +25,12 @@ class UiAutomator(object):
         try:
             return self.device(**kwargs).click()
         except JsonRPCError, e:
-            Utility.output_msg(e, 'e')
             return 'Error'
 
     def long_click(self, **kwargs):
         try:
             return self.device(**kwargs).long_click()
         except JsonRPCError, e:
-            Utility.output_msg(e, 'e')
             return 'Error'
 
     def scroll(self, vertical, forward, steps=100, **kwargs):
@@ -88,11 +86,10 @@ class UiAutomator(object):
         try:
             return self.device(**kwargs).set_text(text)
         except JsonRPCError, e:
-            Utility.output_msg(e, 'e')
             return 'Error'
 
     def exists(self, **kwargs):
-        return self.device(**kwargs).exists()
+        return self.device(**kwargs).exists
 
 if __name__ == '__main__':
     ui = UiAutomator()

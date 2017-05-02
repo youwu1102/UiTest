@@ -7,7 +7,7 @@ from libs.Dump import Analysis
 from os.path import join
 import os
 from xml.dom.minidom import Document
-
+from time import sleep
 class Debug(object):
     def __init__(self, project, package_name, serial=None, activity_name=''):
         self.project = project
@@ -43,6 +43,7 @@ class Debug(object):
         self.initialization()
         while True:
             self.go_next_count = 0  # 这个参数放置一直重复循环在某一段无法抵达的情况
+            self.return_count = 0  # 这个参数放置一直重复循环在某一段无法抵达的情况
             Utility.output_msg('======================while True Flag==========================')
             eigenvalue = self.get_not_complete_node()
             Utility.output_msg('%s node has not been fully traversed.' % eigenvalue)
@@ -120,7 +121,10 @@ class Debug(object):
                     return True
                 return False
             if self.device.exists(text='OK'):
-                print 'ddddddddddddddddddddd'
+                self.device.click(text='OK')
+            if self.return_count> 20:
+                return False
+            sleep(1)
         Utility.output_msg('Function return_to_expect_location over.', 'd')
         return True
 
@@ -238,6 +242,8 @@ class Debug(object):
         if open_list:  # 如果不为空，就执行操作
             window_node = open_list[0]  # 获取第一个节点元素
             action_result = self.do_action(action=window_node)
+            if 'Error' in str(action_result):
+                return
             after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
             if not self.is_current_window_legal(): #  判断当前节点是否合法 可能以后会在判断过程中把一些ALLOW的提醒点掉
                 before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
@@ -315,9 +321,11 @@ class Debug(object):
 if __name__ == '__main__':
     # package_name1 = "com.android.contacts"
     package_name = "com.android.mms"
+    #package_name = "com.tencent.qqmusic"
     # package_name1 = "com.android.deskclock"
     #package_name = "com.example.android.notepad"
     #activity_name = '.NotesList'
+    #activity_name='.activity.AppStarterActivity'
     activity_name=''
     d = Debug(project='SDM660', package_name=package_name,activity_name=activity_name)
     d.main()
