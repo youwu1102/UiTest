@@ -12,9 +12,7 @@ class Debug(object):
     def __init__(self, project, package_name, serial=None, activity_name=''):
         self.project = project
         self.package_name = package_name
-        self.process_name = package_name
-        if activity_name:
-            self.process_name = '{package}/{activity}'.format(package=package_name, activity=activity_name)
+        self.activity_name = activity_name
         self.device = UiAutomator(serial)
         self.log_directory = Utility.make_dirs(join(GlobalVariable.logs_directory, package_name))
         self.case_directory = Utility.make_dirs(join(GlobalVariable.case_utils, project, package_name))
@@ -116,7 +114,7 @@ class Debug(object):
             Utility.output_msg('Current window is not the except window,press back key.')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
-                Utility.start_process_on_device(self.process_name)
+                Utility.start_process_on_device(package=self.package_name, activity=self.activity_name)
                 if self.get_current_eigenvalue() == except_location:
                     return True
                 return False
@@ -321,11 +319,12 @@ class Debug(object):
 if __name__ == '__main__':
     # package_name1 = "com.android.contacts"
     package_name = "com.android.mms"
+    #package_name = "com.tencent.token"
     #package_name = "com.tencent.qqmusic"
     # package_name1 = "com.android.deskclock"
     #package_name = "com.example.android.notepad"
     #activity_name = '.NotesList'
     #activity_name='.activity.AppStarterActivity'
-    activity_name=''
+    activity_name = ''
     d = Debug(project='SDM660', package_name=package_name,activity_name=activity_name)
     d.main()

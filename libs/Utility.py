@@ -87,10 +87,12 @@ class Utility(object):
             Utility.run_command_on_device(cmd='kill %s' % pid[:-1])
 
     @staticmethod
-    def start_process_on_device(process_name):
-        Print.info('I want to start the process \"%s\"' % process_name)
-        Utility.run_command_on_device(cmd='am start %s' % process_name)
-
+    def start_process_on_device(package, activity=''):
+        Print.info('I want to start the process \"%s\"' % package)
+        if activity:
+            Utility.run_command_on_device(cmd='am start -n %s/%s' % (package, activity))
+        else:
+            Utility.run_command_on_device(cmd='am start %s' % package)
     @staticmethod
     def get_process_id_on_device(process_name, not_matching=''):
         pids = []

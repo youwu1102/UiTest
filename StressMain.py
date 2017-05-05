@@ -12,8 +12,8 @@ from libs.GlobalVariable import GlobalVariable
 from libs.TimeFormat import TimeFormat
 
 class Stress(Debug):
-    def __init__(self, project, package_name, serial=None):
-        Debug.__init__(self, project=project, package_name=package_name, serial=serial)
+    def __init__(self, project, package_name, activity_name='',serial=None):
+        Debug.__init__(self, project=project, package_name=package_name, serial=serial,activity_name=activity_name)
         self.root_log_folder = Utility.make_dirs(join(GlobalVariable.logs_directory, TimeFormat.timestamp(), package_name))
         self.test_count = 0
 
