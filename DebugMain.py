@@ -85,7 +85,7 @@ class Debug(object):
             closed_list = value.get_closed()
             optional_list = value.get_optional()
             if next_list:
-                node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Next', doc=doc))
+                node.appendChild(self.__establish_node2(nodes=next_list,element_name='Next', doc=doc))
             if previous_list:
                 node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Previous', doc=doc))
             if closed_list:
@@ -317,14 +317,14 @@ class Debug(object):
         return False
 
 if __name__ == '__main__':
-    # package_name1 = "com.android.contacts"
-    package_name = "com.android.mms"
+    #package_name = "com.android.contacts"
+    #package_name = "com.android.mms"
     #package_name = "com.tencent.token"
     #package_name = "com.tencent.qqmusic"
-    # package_name1 = "com.android.deskclock"
-    #package_name = "com.example.android.notepad"
+    #package_name = "com.android.deskclock"
+    package_name = "com.example.android.notepad"
     #activity_name = '.NotesList'
-    #activity_name='.activity.AppStarterActivity'
-    activity_name = ''
+    activity_name='.activity.AppStarterActivity'
+    #activity_name = ''
     d = Debug(project='SDM660', package_name=package_name,activity_name=activity_name)
     d.main()
