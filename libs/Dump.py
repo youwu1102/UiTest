@@ -17,6 +17,10 @@ class Nodes(object):
 
     @staticmethod
     def __node_useless_rule(node):
+        # if node.get('class') == 'android.widget.FrameLayout':
+        #     return False
+        # if node.get('class') == 'android.widget.LinearLayout':
+        #     return False
         if node.get('clickable') == 'true':
             node['action'] = 'Click'
             return False
@@ -27,7 +31,7 @@ class Analysis(object):
     @staticmethod
     def calculate_eigenvalue(dump_path):
         eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path=dump_path)
-        Utility.output_msg('Tbe current dump eigenvalue is:%s' % eigenvalue)
+        Utility.output_msg('The current dump eigenvalue is:%s' % eigenvalue)
         return eigenvalue
 
     @staticmethod

@@ -39,4 +39,6 @@
 	<class id="36" name="android.webkit.WebView" type="common" />
 	<class id="37" name="android.widget.Image" type="common" />
 	<class id="38" name="android.widget.SeekBar" type="common" />
+	<class id="39" name="android.widget.SearchView" type="common" />
+	<class id="40" name="android.widget.ViewSwitcher" type="common" />
 	</root>

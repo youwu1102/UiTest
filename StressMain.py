@@ -93,7 +93,7 @@ class Stress(Debug):
         self.set_current_dump_path()
         self.device.screenshot(self.current_dump_screenshot)
 
-    def get_current_traversal_node(self):  # 获取当前界面的节点
+    def get_current_traversal_node(self):  # 获取当前界面的节点I want to start the process
         tmp_path = join(self.root_log_folder, 'tmp.uix')
         self.device.dump(tmp_path)
         current_eigenvalue, current_window_nodes = Analysis.get_info_from_dump(tmp_path)

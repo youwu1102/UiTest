@@ -128,4 +128,4 @@ class Convert(object):
 if __name__ == '__main__':
     c =Convert()
     print os.path.exists('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\com.android.mms\\Config.xml')
-    c.Node2Action('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\com.android.mms\\Config.xml')
+    c.Node2Action('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\com.example.android.notepad\\Config.xml')

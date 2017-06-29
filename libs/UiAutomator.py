@@ -46,18 +46,6 @@ class UiAutomator(object):
             return self.get_current_package_name()
 
 
-        # press key via name or key code. Supported key name includes:
-        # home, back, left, right, up, down, center, menu, search, enter,
-        # delete(or del), recent(recent apps), volume_up, volume_down,
-        # volume_mute, camera, power.
-        # Usage:
-        # d.press.back()  # press back key
-        # d.press.menu()  # press home key
-        # d.press(89)     # press keycode
-        #
-        #     key=["home", "back", "left", "right", "up", "down", "center",
-        #          "menu", "search", "enter", "delete", "del", "recent",
-        #          "volume_up", "volume_down", "volume_mute", "camera", "power"]
 
     def press_home(self):
         Utility.output_msg('Press Home Key')

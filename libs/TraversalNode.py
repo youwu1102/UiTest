@@ -9,6 +9,7 @@ class TraversalNode(object):
         self.__closed = []
         self.__previous = []
         self.__next = []
+        self.__level = -1
 
     def append_previous(self, _previous):
         if _previous:
@@ -75,3 +76,13 @@ class TraversalNode(object):
 
     def get_optional(self):
         return self.__optional
+
+    def set_level(self, level):
+        if self.__level == -1:
+            self.__level = level
+        else:
+            print '##############################################################################################'
+
+
+    def get_level(self):
+        return self.__level

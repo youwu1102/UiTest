@@ -77,9 +77,11 @@ class Debug(object):
         config_xml = self.rename_case_xml()
         doc = Document()
         root = doc.createElement('Root')
-        for value in self.dict_traversal_node.values():
+        for ei in self.list_eigenvalue:
+            value = self.dict_traversal_node.get(ei)
             node = doc.createElement('Node')
             node.setAttribute('eigenvalue', value.get_node_eigenvalue())
+            node.setAttribute('level', str(value.get_level()))
             next_list = value.get_next()
             previous_list = value.get_previous()
             closed_list = value.get_closed()
@@ -114,13 +116,24 @@ class Debug(object):
             Utility.output_msg('Current window is not the except window,press back key.')
             self.device.press_back()
             if self.device.get_current_package_name() != self.package_name:
-                Utility.start_process_on_device(package=self.package_name, activity=self.activity_name)
+                for x in range(10):
+                    current_package_name = self.device.get_current_package_name()
+                    if current_package_name == self.package_name:
+                        break
+                    elif current_package_name is None:
+                        self.device.press_recent()
+                        sleep(1)
+                        self.device.press_back()
+                        sleep(1)
+                    else:
+                        Utility.start_process_on_device(package=self.package_name, activity=self.activity_name)
+                        sleep(2)
                 if self.get_current_eigenvalue() == except_location:
                     return True
                 return False
             if self.device.exists(text='OK'):
                 self.device.click(text='OK')
-            if self.return_count> 20:
+            if self.return_count > 10:
                 return False
             sleep(1)
         Utility.output_msg('Function return_to_expect_location over.', 'd')
@@ -232,7 +245,8 @@ class Debug(object):
 
     def initialization(self):
         self.return_to_expect_location(except_location='')
-        self.get_current_traversal_node()
+        current = self.get_current_traversal_node()
+        current.set_level(0)
 
     def tmp(self):
         before_action = self.get_current_traversal_node()   # 操作之前的 界面节点
@@ -256,6 +270,7 @@ class Debug(object):
             else:
                 before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
                 Utility.output_msg('Interface has changed')
+                after_action.set_level(before_action.get_level()+1)
                 after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
                 before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
         else:  # 否则的话 就什么都不做了
@@ -266,6 +281,11 @@ class Debug(object):
     def get_current_traversal_node(self):  # 获取当前界面的节点
         self.dump_current_window()
         current_eigenvalue, current_window_nodes = Analysis.get_info_from_dump(self.current_dump)
+        if self.device.get_current_package_name() != self.package_name:
+            current_traversal_node = TraversalNode(current_eigenvalue)
+            current_traversal_node.init_open(current_window_nodes)
+            self.dict_traversal_node[current_eigenvalue] = current_traversal_node
+            return current_traversal_node
         if current_eigenvalue not in self.dict_traversal_node.keys():
             current_traversal_node = TraversalNode(current_eigenvalue)
             current_traversal_node.init_open(current_window_nodes)
@@ -285,7 +305,20 @@ class Debug(object):
 
     @classmethod
     def get_selector(cls, action):
+            # dict_selector = {'text': 'text',
+            #          'resource-id': 'resourceId',
+            #          'content-desc': 'description',
+            #          'class': 'className'}
         dict_tmp = dict()
+        text = action.get('text')
+        if text:
+            dict_tmp['text'] = text
+            return dict_tmp
+        desc = action.get('content-desc')
+        if desc:
+            dict_tmp['description'] = desc
+            return dict_tmp
+
         for key in GlobalVariable.dict_selector.keys():
             key_value = action.get(key)
             if key_value:
@@ -295,6 +328,9 @@ class Debug(object):
     def get_not_complete_node(self):
         for eigenvalue in self.list_eigenvalue:
             traversal_node = self.dict_traversal_node.get(eigenvalue)
+            if traversal_node.get_level() > 20:
+                print '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&'
+                traversal_node.move_all_open_to_closed()
             open_list = traversal_node.get_open()
             if open_list:
                 Utility.output_msg('Node: %s still has %s node(s) not be traversed' % (traversal_node.get_node_eigenvalue(), len(open_list)))
@@ -312,19 +348,26 @@ class Debug(object):
         return False
 
     def is_current_window_legal(self):
-        if self.device.get_current_package_name() == self.package_name:
+        current_package_name = self.device.get_current_package_name()
+        if current_package_name == self.package_name:
             return True
+        elif current_package_name is None:
+            self.device.press_recent()
+            sleep(1)
+            self.device.press_back()
+            sleep(1)
+            return self.is_current_window_legal()
         return False
 
 if __name__ == '__main__':
-    #package_name = "com.android.contacts"
-    #package_name = "com.android.mms"
+    #package_name = "com.android.dialer"
+    package_name = "com.android.mms"
     #package_name = "com.tencent.token"
     #package_name = "com.tencent.qqmusic"
     #package_name = "com.android.deskclock"
-    package_name = "com.example.android.notepad"
+    #package_name = "com.kugou.android"
     #activity_name = '.NotesList'
-    activity_name='.activity.AppStarterActivity'
-    #activity_name = ''
+    #activity_name='.activity.AppStarterActivity'
+    activity_name = ''
     d = Debug(project='SDM660', package_name=package_name,activity_name=activity_name)
     d.main()
