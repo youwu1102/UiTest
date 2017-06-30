@@ -13,7 +13,6 @@ class Convert(object):
 
     def Node2Action(self, path):
         self.__parse_config(path=path)
-
         if self.root:
             self.nodes.append((self.root, [], []))
             self.generate_test_case()
@@ -97,7 +96,7 @@ class Convert(object):
         if True:
             for node in nodes:
                 eigenvalue = node.getAttribute('eigenvalue')
-                if node.getAttribute('root'):
+                if node.getAttribute('level') == '0':
                     self.root = eigenvalue
                 traversal_node = TraversalNode(eigenvalue=eigenvalue)
                 next_list = node.getElementsByTagName('Next')
@@ -128,4 +127,4 @@ class Convert(object):
 if __name__ == '__main__':
     c =Convert()
     print os.path.exists('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\com.android.mms\\Config.xml')
-    c.Node2Action('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\com.example.android.notepad\\Config.xml')
+    c.Node2Action('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\com.android.mms\\Config.xml')

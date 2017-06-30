@@ -134,8 +134,9 @@ class Debug(object):
             if self.device.exists(text='OK'):
                 self.device.click(text='OK')
             if self.return_count > 10:
+                self.exceptional_handling(eigenvalue=except_location)
                 return False
-            sleep(1)
+            sleep(0.5)
         Utility.output_msg('Function return_to_expect_location over.', 'd')
         return True
 
@@ -283,8 +284,6 @@ class Debug(object):
         current_eigenvalue, current_window_nodes = Analysis.get_info_from_dump(self.current_dump)
         if self.device.get_current_package_name() != self.package_name:
             current_traversal_node = TraversalNode(current_eigenvalue)
-            current_traversal_node.init_open(current_window_nodes)
-            self.dict_traversal_node[current_eigenvalue] = current_traversal_node
             return current_traversal_node
         if current_eigenvalue not in self.dict_traversal_node.keys():
             current_traversal_node = TraversalNode(current_eigenvalue)
@@ -328,7 +327,7 @@ class Debug(object):
     def get_not_complete_node(self):
         for eigenvalue in self.list_eigenvalue:
             traversal_node = self.dict_traversal_node.get(eigenvalue)
-            if traversal_node.get_level() > 20:
+            if traversal_node.get_level() > 10:
                 print '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&'
                 traversal_node.move_all_open_to_closed()
             open_list = traversal_node.get_open()
@@ -361,11 +360,11 @@ class Debug(object):
 
 if __name__ == '__main__':
     #package_name = "com.android.dialer"
-    package_name = "com.android.mms"
+    #package_name = "com.android.mms"
     #package_name = "com.tencent.token"
     #package_name = "com.tencent.qqmusic"
     #package_name = "com.android.deskclock"
-    #package_name = "com.kugou.android"
+    package_name = "com.android.mms"
     #activity_name = '.NotesList'
     #activity_name='.activity.AppStarterActivity'
     activity_name = ''
