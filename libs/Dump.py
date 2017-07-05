@@ -31,18 +31,17 @@ class Analysis(object):
     @staticmethod
     def calculate_eigenvalue(dump_path):
         eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path=dump_path)
-        Utility.output_msg('The current dump eigenvalue is:%s' % eigenvalue)
         return eigenvalue
 
     @staticmethod
     def get_info_from_dump(dump_path):
-        Utility.output_msg('I will analysis the dump file: %s' % dump_path)
+        Utility.output_msg('ANALYSIS|DUMP:%s' % dump_path)
         eigenvalue = Eigenvalue.calculate_eigenvalue(dump_path)
-        Utility.output_msg('I got the eigenvalue: %s ' % eigenvalue)
+        Utility.output_msg('WINDOW|EIGE:%s ' % eigenvalue)
         window_nodes = Analysis.get_nodes_from_dump(dump_path)
-        Utility.output_msg('I got the window nodes:', 'd')
-        for node in window_nodes:
-            Utility.output_msg(str(node), 'd')
+        Utility.output_msg('WINDOW|NODE:%s' % len(window_nodes))
+        # for node in window_nodes:
+        #     Utility.output_msg('WINDOW|Node:%s ' % str(node))
         return eigenvalue, window_nodes
 
         # if eigenvalue not in GlobalVariable.dict_E_M_N.keys():

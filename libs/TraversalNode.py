@@ -10,6 +10,8 @@ class TraversalNode(object):
         self.__previous = []
         self.__next = []
         self.__level = -1
+        self.__attempts = 0
+
 
     def append_previous(self, _previous):
         if _previous:
@@ -88,3 +90,15 @@ class TraversalNode(object):
 
     def get_level(self):
         return self.__level
+
+    def add_attempts(self):
+        self.__attempts += 1
+        return self.__attempts
+
+    def reset_attempts(self):
+        self.__attempts = 0
+        return self.__attempts
+
+    def get_attempts(self):
+        return self.__attempts
+

@@ -13,11 +13,10 @@ class UiAutomator(object):
         return self.device.info
 
     def dump(self, filename=None, compressed=True, pretty=True):
-        Utility.output_msg('Dump device window and pull to \"%s\".' % filename)
+
         return self.device.dump(filename=filename, compressed=compressed, pretty=pretty)
 
     def screenshot(self, filename, scale=1.0, quality=100):
-        Utility.output_msg('Take screenshot and save to \"%s\".' % filename)
         return self.device.screenshot(filename=filename, scale=scale, quality=quality)
 
     def click(self, **kwargs):
