@@ -80,11 +80,15 @@ class Utility(object):
                 return True
 
     @staticmethod
-    def stop_process_on_device(process_name, not_matching=''):
-        Print.info('I want to terminate the process \"%s\"' % process_name)
-        pids = Utility.get_process_id_on_device(process_name=process_name, not_matching=not_matching)
-        for pid in pids:
-            Utility.run_command_on_device(cmd='kill %s' % pid[:-1])
+    def stop_process_on_device(process_name):
+        result = Utility.run_command_on_device(cmd='ps | grep %s | grep -v grep' % process_name, need_output=True)
+        for line in result.split('\n'):
+                if line:
+                    for re_result in Utility.pid_expression.finditer(line):
+                        pid = re_result.group()
+                        Utility.run_command_on_device(cmd='kill %s' % pid)
+                        break
+                    Utility.wait_for_time(1)
 
     @staticmethod
     def start_process_on_device(package, activity=''):

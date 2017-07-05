@@ -77,8 +77,8 @@ class Debug(object):
         config_xml = self.rename_case_xml()
         doc = Document()
         root = doc.createElement('Root')
-        for ei in self.list_eigenvalue:
-            value = self.dict_traversal_node.get(ei)
+        for value in self.dict_traversal_node.values():
+            #value = self.dict_traversal_node.get(ei)
             node = doc.createElement('Node')
             node.setAttribute('eigenvalue', value.get_node_eigenvalue())
             node.setAttribute('level', str(value.get_level()))
@@ -282,9 +282,6 @@ class Debug(object):
     def get_current_traversal_node(self):  # 获取当前界面的节点
         self.dump_current_window()
         current_eigenvalue, current_window_nodes = Analysis.get_info_from_dump(self.current_dump)
-        if self.device.get_current_package_name() != self.package_name:
-            current_traversal_node = TraversalNode(current_eigenvalue)
-            return current_traversal_node
         if current_eigenvalue not in self.dict_traversal_node.keys():
             current_traversal_node = TraversalNode(current_eigenvalue)
             current_traversal_node.init_open(current_window_nodes)
@@ -328,7 +325,6 @@ class Debug(object):
         for eigenvalue in self.list_eigenvalue:
             traversal_node = self.dict_traversal_node.get(eigenvalue)
             if traversal_node.get_level() > 10:
-                print '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&'
                 traversal_node.move_all_open_to_closed()
             open_list = traversal_node.get_open()
             if open_list:
@@ -345,6 +341,14 @@ class Debug(object):
                     Utility.output_msg('\t%s' % str(i), level='d')
                 return traversal_node.get_node_eigenvalue()
         return False
+
+
+
+
+
+
+
+
 
     def is_current_window_legal(self):
         current_package_name = self.device.get_current_package_name()
@@ -364,9 +368,9 @@ if __name__ == '__main__':
     #package_name = "com.tencent.token"
     #package_name = "com.tencent.qqmusic"
     #package_name = "com.android.deskclock"
-    package_name = "com.android.mms"
+    package_name = "com.letv.android.client"
     #activity_name = '.NotesList'
     #activity_name='.activity.AppStarterActivity'
-    activity_name = ''
+    activity_name = '.activity.MainActivity'
     d = Debug(project='SDM660', package_name=package_name,activity_name=activity_name)
     d.main()

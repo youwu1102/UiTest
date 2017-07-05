@@ -24,6 +24,7 @@ class Convert(object):
             if self.nodes:
                     eigenvalue, E, A = self.nodes.pop()
                     node = self.dict_traversal_node.get(eigenvalue)
+                    print eigenvalue
                     next_list = node.get_next()
                     optional_list = node.get_optional()
                     for e, a in next_list:
@@ -55,6 +56,7 @@ class Convert(object):
                     #     self.wuyou.append((eigenvalue, pre))
             else:
                 break
+        print 'ss'
         tmp ='C:\\1\\1'
         count = 0
         for wuyou in self.wuyou:
@@ -75,8 +77,8 @@ class Convert(object):
                 action_node.setAttribute('id', action.get('resource-id'))
             if action.get('class'):
                 action_node.setAttribute('class', action.get('class'))
-            # if action.get('index'):
-            #     action_node.setAttribute('index', action.get('index'))
+            if action.get('index'):
+                action_node.setAttribute('index', action.get('index'))
             root.appendChild(action_node)
         doc.appendChild(root)
         f = open(save_path, 'w')
@@ -126,5 +128,4 @@ class Convert(object):
 
 if __name__ == '__main__':
     c =Convert()
-    print os.path.exists('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\com.android.mms\\Config.xml')
-    c.Node2Action('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\com.android.mms\\Config.xml')
+    c.Node2Action('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\org.codeaurora.snapcam\\Config.xml')

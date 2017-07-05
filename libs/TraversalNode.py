@@ -43,13 +43,16 @@ class TraversalNode(object):
         for window_node in window_nodes:
             if window_node.get('action') == 'Click':
                 self.__open.append(window_node)
-            elif window_node.get('action') == 'Edit':
-                self.__optional.append(window_node)
 
     def move_all_open_to_closed(self):
-        self.__closed = self.__open[:]
-        self.__open = []
+        if self.__open:
+            self.__closed = self.__open[:]
+            self.__open = []
 
+    def move_all_open_to_optional(self):
+        if self.__open:
+            self.__optional = self.__open[:]
+            self.__open = []
 
     def move_to_optional(self, element):
         self.__open.remove(element)
@@ -81,8 +84,7 @@ class TraversalNode(object):
         if self.__level == -1:
             self.__level = level
         else:
-            print '##############################################################################################'
-
+            Utility.output_msg('Can not set level: %s' % self.__level, level='e')
 
     def get_level(self):
         return self.__level
