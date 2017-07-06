@@ -20,23 +20,23 @@ class UiAutomator(object):
         return self.device.screenshot(filename=filename, scale=scale, quality=quality)
 
     def click(self, **kwargs):
-        Utility.output_msg('Click:%s' % kwargs)
+        Utility.output_msg('UIAUTOMATOR|CLICK|SELECTOR: %s' % str(kwargs))
         try:
-            return self.device(**kwargs).click()
-        except JsonRPCError, e:
-            return 'Error'
+            self.device(**kwargs).click()
+            return True
+        except JsonRPCError:
+            return False
+
+    def click_if_exists(self,text):
+        if self.device(text=text).exists:
+            self.device(text=text).click
+
 
     def long_click(self, **kwargs):
         try:
             return self.device(**kwargs).long_click()
         except JsonRPCError, e:
             return 'Error'
-
-    def scroll(self, vertical, forward, steps=100, **kwargs):
-        print vertical
-        print forward
-        print kwargs
-        return self.device(**kwargs).scroll(steps=steps)
 
     def get_current_package_name(self):
         try:

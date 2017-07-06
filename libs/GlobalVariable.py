@@ -27,10 +27,9 @@ class GlobalVariable(object):
                      'content-desc': 'description',
                      'class': 'className',
                      'index': 'index'}
-
+    watch_list = ['ALLOW', 'Allow']
     # ===============================================
 
-    dict_E_M_N = dict()  # eigenvalue mapping node
 
 
 if __name__ == '__main__':
