@@ -25,6 +25,8 @@ class Convert(object):
                     eigenvalue, E, A = self.nodes.pop()
                     node = self.dict_traversal_node.get(eigenvalue)
                     print eigenvalue
+                    if node is None:
+                        continue
                     next_list = node.get_next()
                     optional_list = node.get_optional()
                     for e, a in next_list:
@@ -128,4 +130,4 @@ class Convert(object):
 
 if __name__ == '__main__':
     c =Convert()
-    c.Node2Action('C:\\cygwin64\\home\\c_youwu\\UiTest\\repository\\CaseUtils\\SDM660\\org.codeaurora.snapcam\\Config.xml')
+    c.Node2Action('C:\cygwin64\home\c_youwu\UiTest\\repository\CaseUtils\SDM660\com.android.contacts\Config.xml')

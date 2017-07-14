@@ -33,10 +33,12 @@ class Debug(object):
         self.initialization()
         self.processing()
         self.finish()
+    def finish(self):
+        self.write_node_config()
 
     def initialization(self):
-        # Utility.stop_process_on_device(self.package_name)
-        # Utility.start_process_on_device(self.package_name, self.activity_name)
+        Utility.stop_process_on_device(self.package_name)
+        Utility.start_process_on_device(self.package_name, self.activity_name)
         current = self.get_current_traversal_node()
         current.set_level(0)
 
@@ -62,6 +64,10 @@ class Debug(object):
         current = self.get_current_eigenvalue()
         Utility.output_msg('GO_TO_TARGET|C:%s' % current)
         Utility.output_msg('GO_TO_TARGET|T:%s' % target)
+        if current not in self.dict_traversal_node.keys():
+            self.get_current_traversal_node()
+            Utility.output_msg('GO_TO_TARGET|NEW')
+            return False
         if current == target:
             Utility.output_msg('GO_TO_TARGET|DONE')
             return True
@@ -77,7 +83,6 @@ class Debug(object):
                 Utility.output_msg('GO_TO_TARGET|FAIL')
                 return False
 
-
     def get_current_eigenvalue(self):
         self.device.dump('current')
         return Analysis.calculate_eigenvalue('current')
@@ -85,10 +90,12 @@ class Debug(object):
     def calculated_path(self, current, target):
         dict_previous = dict()
         dict_next = dict()
+
         self.find_in_next(target=target, dict_path=dict_next)
         if current in dict_next:
             print 'next'
             return self.go_next(dict_next=dict_next,target=target)
+
         self.find_in_previous(current=current, dict_path=dict_previous)
         if target in dict_previous:
             print 'previous'
@@ -100,8 +107,36 @@ class Debug(object):
             Utility.output_msg('I will return to ##%s## first.' % brother_result)
             self.return_to_expect_location(except_location=brother_result)
             return self.go_next(dict_next=dict_next,target=target)
-        self.exceptional_handling(eigenvalue=target)
         return False
+
+
+    def go_next(self, dict_next, target):
+        if self.go_next_count > 10:
+            return True
+        self.go_next_count += 1
+        current = self.get_current_eigenvalue()
+        if current != target:
+            if dict_next.get(current) is None:
+                Utility.output_msg('I can not get next step')
+                return False
+            self.do(dict_next.get(current))
+            self.go_next(dict_next=dict_next, target=target)
+        else:
+            return True
+
+    def find_in_previous(self, current, dict_path):
+        current_node = self.dict_traversal_node.get(current)
+        while current_node is None:
+            self.device.press_back()
+            current_node = self.get_current_traversal_node()
+
+        for e, a in current_node.get_previous():
+            if e in dict_path.keys():  # 如果PATH LIST已经包含了这个路径  那么认为这是一条重复路径则不进行下去了
+                continue
+            else:
+                dict_path[e] = a
+                self.find_in_previous(current=e, dict_path=dict_path)
+
 
     def find_in_next(self, target, dict_path):
         target_node = self.dict_traversal_node.get(target)
@@ -111,6 +146,41 @@ class Debug(object):
             else:
                 dict_path[e] = a
                 self.find_in_next(target=e, dict_path=dict_path)
+
+    def find_in_brother(self, dict_previous,dict_next):
+        for key in dict_previous.keys():
+            if key in dict_next.keys():
+                return key
+        return False
+
+    def return_to_expect_location(self, except_location):  # 返回预期位置
+        Utility.output_msg('I want to return to except window.')
+        while self.get_current_eigenvalue() != except_location:
+            self.return_count += 1
+            Utility.output_msg('Current window is not the except window,press back key.')
+            self.device.press_back()
+            if self.device.get_current_package_name() != self.package_name:
+                for x in range(10):
+                    current_package_name = self.device.get_current_package_name()
+                    if current_package_name == self.package_name:
+                        break
+                    elif current_package_name is None:
+                        self.device.press_recent()
+                        sleep(1)
+                        self.device.press_back()
+                        sleep(1)
+                    else:
+                        Utility.start_process_on_device(package=self.package_name, activity=self.activity_name)
+                        sleep(2)
+                if self.get_current_eigenvalue() == except_location:
+                    return True
+                return False
+            self.device.click_if_exists('OK')
+            if self.return_count > 10:
+                return False
+            sleep(0.5)
+        Utility.output_msg('Function return_to_expect_location over.', 'd')
+        return True
 
     def action(self):
         # 会先获取一次操作前的界面
@@ -134,6 +204,7 @@ class Debug(object):
             if not self.is_current_window_legal(): #  判断当前节点是否合法
                 Utility.output_msg('ACTION|AFTER|ILLEGAL')
                 before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
+                after_action.set_level(before_action.get_level() + 1)
                 after_action.move_all_open_to_optional()  # 如果是非法的 则将这个节点里面的操作节点全部修改到closed状态
                 after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
                 before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
@@ -179,17 +250,20 @@ class Debug(object):
         return current_traversal_node
 
     def get_not_complete_node(self):
-        for eigenvalue in self.list_eigenvalue:
-            traversal_node = self.dict_traversal_node.get(eigenvalue)
-            if not self.traversal_node_rule(traversal_node=traversal_node):
-                continue
-            open_list = traversal_node.get_open()
-            if open_list:
-                Utility.output_msg('NOT_COMPLETE|NODE|EIGE:%s' % traversal_node.get_node_eigenvalue())
-                Utility.output_msg('NOT_COMPLETE|NODE|OPEN:%s' % len(open_list))
-                # for o in open_list:
-                #     Utility.output_msg('NOT_COMPLETE|NODE| ACT:%s' % str(o))
-                return traversal_node.get_node_eigenvalue()
+        for attempts_limit in range(3):
+            for eigenvalue in self.list_eigenvalue:
+                traversal_node = self.dict_traversal_node.get(eigenvalue)
+                if not self.traversal_node_rule(traversal_node=traversal_node, attempts_limit=attempts_limit):
+                    continue
+                open_list = traversal_node.get_open()
+                if open_list:
+                    Utility.output_msg('NOT_COMPLETE|NODE|EIGE:%s' % traversal_node.get_node_eigenvalue())
+                    Utility.output_msg('NOT_COMPLETE|NODE|OPEN:%s' % len(open_list))
+                    Utility.output_msg('NOT_COMPLETE|NODE|A:%s' % traversal_node.get_attempts())
+                    Utility.output_msg('NOT_COMPLETE|NODE|L:%s' % traversal_node.get_level())
+                    # for o in open_list:
+                    #     Utility.output_msg('NOT_COMPLETE|NODE| ACT:%s' % str(o))
+                    return traversal_node.get_node_eigenvalue()
         return None
         # for eigenvalue in self.list_retry_eigenvalue:
         #     traversal_node = self.dict_traversal_node.get(eigenvalue)
@@ -201,15 +275,15 @@ class Debug(object):
         #         return traversal_node.get_node_eigenvalue()
         # return False
 
-    def traversal_node_rule(self, traversal_node):
+    def traversal_node_rule(self, traversal_node, attempts_limit):
         open_list = traversal_node.get_open()
         if not open_list:  # 判断是否还有open的节点
             return False
-
         if traversal_node.get_level() > 5:  # 判断遍历层次是否大于10
             traversal_node.move_all_open_to_closed()
             return False
-
+        if traversal_node.get_attempts() > attempts_limit:
+            return False
         for o in open_list:
             if o.get('package') != self.package_name:
                 return False
@@ -262,8 +336,70 @@ class Debug(object):
                 self.device.click_if_exists(text=text)
             return self.device.get_current_package_name() == self.package_name
 
+
+
+
+
+    def rename_case_xml(self):
+        if os.path.exists(self.case_xml):
+            Utility.output_msg('I find an old config file for %s, I will generate a new one.')
+            for x in xrange(1, 10000):
+                back_case_xml = join(self.case_directory, 'Config.xml.back%s' % x)
+                if not os.path.exists(back_case_xml):
+                    os.rename(self.case_xml, back_case_xml)
+                    break
+        return self.case_xml
+
+
+    def __establish_node1(self, nodes, element_name, doc):
+        xml_node = doc.createElement(element_name)
+        for _node in nodes:
+            print str(_node)
+            _tmp = doc.createElement('Info')
+            _tmp.setAttribute('action', str(_node))
+            xml_node.appendChild(_tmp)
+        return xml_node
+
+    def __establish_node2(self, nodes, element_name, doc):
+        xml_node = doc.createElement(element_name)
+        for _node in nodes:
+            print str(_node)
+            _tmp = doc.createElement('Info')
+            _tmp.setAttribute('eigenvalue', _node[0])
+            _tmp.setAttribute('action', str(_node[1]))
+            xml_node.appendChild(_tmp)
+        return xml_node
+
+    def write_node_config(self):
+        config_xml = self.rename_case_xml()
+        doc = Document()
+        root = doc.createElement('Root')
+        for value in self.dict_traversal_node.values():
+            #value = self.dict_traversal_node.get(ei)
+            node = doc.createElement('Node')
+            node.setAttribute('eigenvalue', value.get_node_eigenvalue())
+            node.setAttribute('level', str(value.get_level()))
+            next_list = value.get_next()
+            previous_list = value.get_previous()
+            closed_list = value.get_closed()
+            optional_list = value.get_optional()
+            if next_list:
+                node.appendChild(self.__establish_node2(nodes=next_list,element_name='Next', doc=doc))
+            if previous_list:
+                node.appendChild(self.__establish_node2(nodes=previous_list,element_name='Previous', doc=doc))
+            if closed_list:
+                node.appendChild(self.__establish_node1(nodes=closed_list,element_name='All', doc=doc))
+            if optional_list:
+                node.appendChild(self.__establish_node1(nodes=optional_list,element_name='Optional', doc=doc))
+            root.appendChild(node)
+        doc.appendChild(root)
+        f = open(config_xml, 'w')
+        f.write(doc.toprettyxml(indent='', encoding='utf-8'))
+        f.close()
+
+
 if __name__ == '__main__':
-    package_name = "com.letv.android.client"
-    activity_name = '.activity.MainActivity'
+    package_name = "com.android.mms"
+    activity_name = '.ui.ConversationList'
     d = Debug(project='SDM660', package_name=package_name,activity_name=activity_name)
     d.main()
