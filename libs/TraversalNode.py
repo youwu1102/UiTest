@@ -11,6 +11,7 @@ class TraversalNode(object):
         self.__next = []
         self.__level = -1
         self.__attempts = 0
+        self.__id = -1
 
 
     def append_previous(self, _previous):
@@ -102,3 +103,11 @@ class TraversalNode(object):
     def get_attempts(self):
         return self.__attempts
 
+    def set_id(self, id):
+        if self.__id == -1:
+            self.__id = id
+        else:
+            Utility.output_msg('Can not set id: %s' % self.__id, level='e')
+
+    def get_id(self):
+        return self.__id
