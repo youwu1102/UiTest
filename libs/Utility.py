@@ -97,7 +97,7 @@ class Utility(object):
             Utility.run_command_on_device(cmd='am start -n %s/%s' % (package, activity))
         else:
             Utility.run_command_on_device(cmd='am start %s' % package)
-        Utility.wait_for_time(10)
+        Utility.wait_for_time(5)
 
     @staticmethod
     def get_process_id_on_device(process_name, not_matching=''):

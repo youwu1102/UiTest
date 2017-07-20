@@ -41,4 +41,7 @@
 	<class id="38" name="android.widget.SeekBar" type="common" />
 	<class id="39" name="android.widget.SearchView" type="common" />
 	<class id="40" name="android.widget.ViewSwitcher" type="common" />
+	<class id="41" name="android.widget.AdapterView" type="common" />
+	<class id="42" name="android.widget.ToggleButton" type="common" />
+	<class id="43" name="android.widget.Gallery" type="common" />
 	</root>

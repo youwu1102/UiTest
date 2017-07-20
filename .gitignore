@@ -4,5 +4,5 @@
 *.log
 *.class
 logs/
-repository/CaseUtils/SDM660/com.android.contacts/Config.xml.back*
+repository/CaseUtils
 current
