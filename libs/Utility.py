@@ -10,7 +10,7 @@ import random
 import string
 
 class Utility(object):
-    pid_expression = re.compile(r'\d{3,5} ')
+    pid_expression = re.compile(r'\d{4,5} ')
 
     @staticmethod
     def run_command_on_pc(cmd, except_result='', except_true=True, need_output=False):

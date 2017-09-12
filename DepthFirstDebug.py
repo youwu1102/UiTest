@@ -8,12 +8,13 @@ from os.path import join
 from xml.dom.minidom import Document
 import os
 from time import sleep
-
+from difflib import SequenceMatcher
 
 class Debug(object):
     def __init__(self, project, package_name, serial=None, activity_name=''):
         self.project = project
         self.package_name = package_name
+        GlobalVariable.package_name = package_name
         self.activity_name = activity_name
         self.device = UiAutomator(serial)
         self.log_directory = Utility.make_dirs(join(GlobalVariable.logs_directory, package_name))
@@ -22,15 +23,10 @@ class Debug(object):
         self.current_dump = ''
         self.current_dump_txt = ''
         self.current_dump_screenshot = ''
-        self.dict_eige_mapping_node = dict()  # 每一个特征值对应一个遍历路径上的节点
-        self.dict_id_mappint_eige = dict()
-        self.dict_eige_mappint_id = dict()
-        self.list_eige = list()  # 记录遍历节点出现的顺序
-        self.dict_path_mapping_action = dict()
+        self.list_traversal_node = list()
+        self.dict_eige_mapping_node = dict()
         self.new_node_count = 0
         self.count = 0  # 计数器
-        self.return_count=0
-
     def main(self):
         self.initialization()
         self.processing()
@@ -40,10 +36,12 @@ class Debug(object):
         pass
 
     def initialization(self):
+        Utility.run_command_on_pc('adb root')
+        sleep(3)
+        Utility.run_command_on_pc('adb wait-for-device')
         Utility.stop_process_on_device(self.package_name)
         Utility.start_process_on_device(self.package_name, self.activity_name)
-        current = self.get_current_traversal_node()
-        current.set_level(0)
+        self.get_current_traversal_node()  # 将一个节点添加进去
 
     def processing(self):
         Utility.output_msg('PROCESSING|START')
@@ -58,24 +56,34 @@ class Debug(object):
             Utility.output_msg('PROCESSING|WHILE:END')
         Utility.output_msg('PROCESSING|END')
 
-
     def restart_process_on_device(self):
         Utility.stop_process_on_device(self.package_name)
         Utility.start_process_on_device(self.package_name, self.activity_name)
+        self.device.click(text='首页')
         sleep(5)
 
+    def return_to_first_page(self):
+        current = self.get_current_traversal_node()
+        current_id = str(current.get_id())
+        if current_id == '0':
+            return True
+        for path_file in os.listdir(self.case_directory):
+            if '.opt' in path_file:
+                continue
+            path_list = path_file.replace('.txt', '').split('_')
+            if current_id in path_list and path_list[-1] == '0':
+                actions = self.__read_path_file(path_file)[path_list.index(current_id):]
+                for action in actions:
+                    self.do(action)
+        if self.get_current_traversal_node().get_id() == 0:
+            return True
+        self.restart_process_on_device()
+        return False
+
+
     def calculated_path(self, target):
-
         current = self.get_current_traversal_node()
-        current_eige = current.get_node_eigenvalue()
-        if current_eige == target:
-            return [current.get_id()], [], 0
-        else:
-            return self.__find_path_file(start=current_eige, end=target)
-
-    def calculated_path_1(self, target):
-        current = self.get_current_traversal_node()
-        current_eige = current.get_node_eigenvalue()
+        current_eige = current.get_eigenvalue()
         if current_eige == target:
             return [current.get_id()], [], 0
         else:
@@ -89,110 +97,72 @@ class Debug(object):
         return lines
 
     def __find_path_file(self, start, end):
-        start_id = self.dict_eige_mappint_id.get(start)
-        end_id = self.dict_eige_mappint_id.get(end)
+        start_id = self.dict_eige_mapping_node.get(start).get_id()
+        end_id = self.dict_eige_mapping_node.get(end).get_id()
         for path_file in os.listdir(self.case_directory):
             if '.opt' in path_file:
                 continue
             path_list = path_file.replace('.txt', '').split('_')
+            if path_list[0] == str(start_id) and path_list[-1] == str(end_id):
+                return path_list, self.__read_path_file(path_file), 0
             if str(start_id) in path_list and path_list[-1] == str(end_id):
                 print path_list.index(str(start_id))
                 return path_list, self.__read_path_file(path_file), path_list.index(str(start_id))
         self.add_attempts(end)
         self.restart_process_on_device()
         current = self.get_current_traversal_node()
-        return [self.dict_eige_mappint_id.get(current)], [], 0
+        return [current.get_id()], [], 0
 
     def add_attempts(self, eige):
         node = self.dict_eige_mapping_node.get(eige)
         node.add_attempts()
-
-    def return_to_expect_location(self, except_location):  # 返回预期位置
-        Utility.output_msg('I want to return to except window.')
-        while self.get_current_eigenvalue() != except_location:
-            self.return_count += 1
-            Utility.output_msg('Current window is not the except window,press back key.')
-            self.device.press_back()
-            if self.device.get_current_package_name() != self.package_name:
-                for x in range(10):
-                    current_package_name = self.device.get_current_package_name()
-                    if current_package_name == self.package_name:
-                        break
-                    elif current_package_name is None:
-                        self.device.press_recent()
-                        sleep(1)
-                        self.device.press_back()
-                        sleep(1)
-                    else:
-                        Utility.start_process_on_device(package=self.package_name, activity=self.activity_name)
-                        sleep(2)
-                if self.get_current_eigenvalue() == except_location:
-                    return True
-                return False
-            if self.device.exists(text='OK'):
-                self.device.click(text='OK')
-            if self.return_count > 10:
-                return False
-            sleep(0.5)
-        Utility.output_msg('Function return_to_expect_location over.', 'd')
-        return True
 
     def get_current_eigenvalue(self):
         self.device.dump('current')
         return Analysis.calculate_eigenvalue('current')
 
     def depth_first_traversal(self, expect_start_eigenvalue):
-        Utility.output_msg('ACTION|START')
+        #返回初始的地址
+        self.return_to_first_page()
         traversal_path, action_path, index = self.calculated_path(expect_start_eigenvalue)
-        print traversal_path, action_path
         for x in range(index, len(action_path)):
             self.do(action_path[x])
             sleep(1)
+
+        #第一步走到目标位置
         while True:
             before_action = self.get_current_traversal_node() # 先获取当前节点信息
             before_action.reset_attempts()
             open_list = before_action.get_open()  # 获取操作之前的未执行过的操作
-            Utility.output_msg('ACTION|BEFORE|NODE|EIGI:%s' % before_action.get_node_eigenvalue())
-            Utility.output_msg('ACTION|BEFORE|NODE|OPEN:%s' % len(before_action.get_open()))
             if open_list:  # 如果不为空，就执行操作
                 window_node = open_list[0]  # 获取第一个节点元素
-                if not self.do(action=window_node):
+                before_action.add_to_closed(window_node)  # 只要不出错就将节点放到关闭的状态下
+                if not self.do(action=window_node):  # 判断是否出错 如果出错就返回
                     Utility.output_msg('ACTION|UIAUTOMATION|EXCEPTION')
+                    self.__write_path_optional(traversal_path, action_path, window_node)
                     return
-                sleep(1)
                 after_action = self.get_current_traversal_node()  # 获取操作之后的界面节点
-                Utility.output_msg('ACTION|AFTER|NODE|EIGI:%s' % after_action.get_node_eigenvalue())
-                Utility.output_msg('ACTION|AFTER|NODE|OPEN:%s' % len(after_action.get_open()))
-                if not self.is_current_window_legal():  # 判断当前节点是否合法
-                    Utility.output_msg('ACTION|AFTER|ILLEGAL')
-                    before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
-                    after_action.set_level(before_action.get_level() + 1)
-                    after_action.move_all_open_to_optional()  # 如果是非法的 则将这个节点里面的操作节点全部修改到closed状态
-                    after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
-                    before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
+                if before_action is after_action:  # 判断节点是否为同一个
+                    Utility.output_msg('ACTION|AFTER|SAME')
+                    self.__write_path_optional(traversal_path, action_path, window_node)
+                    continue
+
+                if after_action.get_type() == 'illegal':  # 判断当前节点是否合法 不合法就写饭之后返回最后界面
                     traversal_path.append(after_action.get_id())
                     action_path.append(window_node)
                     self.__write_path(traversal_path, action_path)
                     self.return_to_normal_package()
                     return
-                if before_action is after_action:  # 判断节点是否为同一个
-                    Utility.output_msg('ACTION|AFTER|SAME')
-                    before_action.move_to_optional(window_node)
-                    self.__write_path_optional(traversal_path, action_path, window_node)
-                    continue
-                else:
-                    Utility.output_msg('ACTION|AFTER|NORMAL')
-                    before_action.move_to_closed(window_node)  # 将操作步骤 从OPEN列表移动CLOSED列表
-                    after_action.set_level(before_action.get_level() + 1)
-                    after_action.append_previous((before_action.get_node_eigenvalue(), window_node))  # 操作的后的节点添加前继
-                    before_action.append_next((after_action.get_node_eigenvalue(), window_node))  # 操作后的节点添加后继
 
-                if after_action.get_id() in traversal_path: # 如果执行路径中已经存在了 就返回
+                if after_action.get_id() in traversal_path:  # 如果执行路径中已经存在了 就返回
+                    print traversal_path
                     traversal_path.append(after_action.get_id())
+                    print traversal_path
                     action_path.append(window_node)
                     self.__write_path(traversal_path, action_path)
                     return
 
+                Utility.output_msg('ACTION|AFTER|NORMAL')
                 traversal_path.append(after_action.get_id())
                 action_path.append(window_node)
                 self.__write_path(traversal_path, action_path)
@@ -200,29 +170,6 @@ class Debug(object):
                 return
         Utility.output_msg('ACTION|END')
 
-
-    def __write_path(self,traversal_path, action_path):
-        tmp = [str(x) for x in traversal_path]
-        file_name = '_'.join(tmp)
-        with open(join(self.case_directory, file_name+'.txt'), 'w') as w_file:
-            for action in action_path:
-                w_file.write(str(action)+'\n')
-
-    def __write_path_optional(self,traversal_path, action_path, window_node):
-        tmp = [str(x) for x in traversal_path]
-        file_name = '_'.join(tmp)
-        with open(self.get_option_name(file_name), 'w') as w_file:
-            for action in action_path:
-                w_file.write(str(action)+'\n')
-            w_file.write(str(window_node) + '\n')
-
-    def get_option_name(self, file_name):
-        tmp_path = join(self.case_directory, file_name+'.opt')
-        for x in xrange(1, 10000):
-            tmp = tmp_path + str(x)
-            if not os.path.exists(tmp):
-                return tmp
-        return False
 
     def set_current_dump_path(self):  # 更新最新的dump路径，每次调用自动加1
         self.current_dump = join(self.log_directory, '%04d.uix' % self.count)
@@ -238,63 +185,77 @@ class Debug(object):
         self.device.screenshot(self.current_dump_screenshot)
 
     def get_current_traversal_node(self):  # 获取当前界面的节点
+        sleep(1)
         self.dump_current_window()
         current_eigenvalue, current_window_nodes = Analysis.get_info_from_dump(self.current_dump)
-        if current_eigenvalue not in self.dict_eige_mapping_node.keys():
-            Utility.output_msg('SYSTEM|NEW:%s' % current_eigenvalue)
+        if not self.compare_node_exists(current_eigenvalue, current_window_nodes):
             current_traversal_node = TraversalNode(current_eigenvalue) # 初始化node
-            current_traversal_node.init_open(current_window_nodes)  # 初始化 node中的节点
+            current_traversal_node.init_total(current_window_nodes)  # 初始化 node中的节点
             current_traversal_node.set_id(self.new_node_count)    # 初始化 node ID
             self.__write_node(current_traversal_node)  # 方便写出来查看 可以不用
-            self.dict_eige_mappint_id[current_eigenvalue] = self.new_node_count
-            self.dict_id_mappint_eige[self.new_node_count] = current_eigenvalue
             self.dict_eige_mapping_node[current_eigenvalue] = current_traversal_node
-            self.list_eige.append(current_eigenvalue)
+            self.list_traversal_node.append(current_traversal_node)
             self.new_node_count += 1
         else:
-            Utility.output_msg('SYSTEM|GET:%s' % current_eigenvalue)
             current_traversal_node = self.dict_eige_mapping_node.get(current_eigenvalue)
         return current_traversal_node
 
+    def compare_node_exists(self, eigenvalue, window_nodes):
+        for p_eigenvalue in self.dict_eige_mapping_node.keys():  # 之前出现过的NODE列表
+            p_node = self.dict_eige_mapping_node.get(p_eigenvalue)
+            compare_result = Debug.compare_eigenvalue(eigenvalue, p_eigenvalue)
+            print compare_result
+            if compare_result == 'same':   # 如果比较结果是完全一样的 则返回True
+                return True
+            elif compare_result == 'almost':  # 如果比较结果几乎一样，就需要合并两个node,然后返回结果
+                print p_node.get_id()
+                self.__modify_node(id=p_node.get_id(), eigenvalue=eigenvalue, window_nodes=window_nodes)
+                p_node.merge_total(window_nodes=window_nodes)
+                self.dict_eige_mapping_node[eigenvalue] = p_node
+                return True
+        return False
+
+
+    @staticmethod
+    def compare_eigenvalue(x, y):
+        if x == y:  # 完全相等
+            return 'same'
+        else:
+            same_number = Debug.same_between_eigenvalue(str1=x, str2=y) * 1.0
+            compare_x = same_number / len(x)
+            compare_y = same_number / len(y)
+            if compare_x > 0.95 and compare_y >= 0.85:
+                return 'almost'
+            elif compare_y > 0.95 and compare_x >= 0.85:
+                return 'almost'
+            elif compare_x >= 0.9 and compare_y >=0.9:
+                return 'almost'
+        return 'not_same'
+
+    @staticmethod
+    def same_between_eigenvalue(str1, str2):
+        total = 0
+        test = SequenceMatcher(None, str1, str2)
+        for block in test.get_matching_blocks():
+            total += block.size
+        return total
+
     def get_not_complete_node(self):
         for attempts_limit in range(3):
-            for eigenvalue in self.list_eige:
-                traversal_node = self.dict_eige_mapping_node.get(eigenvalue)
+            for traversal_node in self.list_traversal_node:
                 if not self.traversal_node_rule(traversal_node=traversal_node, attempts_limit=attempts_limit):
                     continue
-                open_list = traversal_node.get_open()
-                if open_list:
-                    Utility.output_msg('NOT_COMPLETE|NODE|EIGE:%s' % traversal_node.get_node_eigenvalue())
-                    Utility.output_msg('NOT_COMPLETE|NODE|OPEN:%s' % len(open_list))
-                    Utility.output_msg('NOT_COMPLETE|NODE|A:%s' % traversal_node.get_attempts())
-                    Utility.output_msg('NOT_COMPLETE|NODE|L:%s' % traversal_node.get_level())
-                    # for o in open_list:
-                    #     Utility.output_msg('NOT_COMPLETE|NODE| ACT:%s' % str(o))
-                    return traversal_node.get_node_eigenvalue()
+                return traversal_node.get_eigenvalue()
         return None
 
-    def __write_node(self, node):
-        with open(join(self.txt_directory, '%d.txt' % node.get_id()), 'w') as w_file:
-            w_file.write(node.get_node_eigenvalue()+'\n')
-            for open_action in node.get_open():
-                w_file.write(str(open_action)+'\n')
-            w_file.write('\n\n')
-            w_file.write(self.current_dump+'\n')
-            w_file.write(self.current_dump_screenshot+'\n')
-
     def traversal_node_rule(self, traversal_node, attempts_limit):
-        open_list = traversal_node.get_open()
-        if not open_list:  # 判断是否还有open的节点
-            return False
-        if traversal_node.get_level() > 5:  # 判断遍历层次是否大于10
-            traversal_node.move_all_open_to_closed()
+        if traversal_node.get_type() == 'illegal':
             return False
         if traversal_node.get_attempts() > attempts_limit:
             return False
-        for o in open_list:
-            if o.get('package') != self.package_name:
-                return False
-            break
+        open_list = traversal_node.get_open()
+        if not open_list:  # 判断是否还有open的节点
+            return False
         return True
 
     def do(self, action):
@@ -324,33 +285,64 @@ class Debug(object):
                 dict_tmp[GlobalVariable.dict_selector.get(key)] = key_value
         return dict_tmp
 
-    def is_current_window_legal(self):
-        current_package_name = self.device.get_current_package_name()
-        if current_package_name == self.package_name:
-            return True
-        elif current_package_name is None:
-            self.device.press_recent()
-            sleep(1)
-            self.device.press_back()
-            sleep(1)
-            return self.is_current_window_legal()
-        else:
-            self.device.dump(join(self.log_directory, 'illegal%04d.uix' % self.count))
-            self.device.screenshot(join(self.log_directory, 'illegal%04d.png' % self.count))
-            for text in GlobalVariable.watch_list:
-                self.device.click_if_exists(text=text)
-            return self.device.get_current_package_name() == self.package_name
-
     def return_to_normal_package(self):
         for x in range(10):
             self.device.press_back()
+            self.device.click_if_exists(text='ALLOW')
             if self.device.get_current_package_name() == self.package_name:
                 break
 
+
+    def __write_path(self,traversal_path, action_path):
+        tmp = [str(x) for x in traversal_path]
+        file_name = '_'.join(tmp)
+        with open(join(self.case_directory, file_name+'.txt'), 'w') as w_file:
+            for action in action_path:
+                w_file.write(str(action)+'\n')
+
+    def __write_path_optional(self,traversal_path, action_path, window_node):
+        tmp = [str(x) for x in traversal_path]
+        file_name = '_'.join(tmp)
+        with open(self.__get_option_name(file_name), 'w') as w_file:
+            for action in action_path:
+                w_file.write(str(action)+'\n')
+            w_file.write(str(window_node) + '\n')
+
+    def __get_option_name(self, file_name):
+        tmp_path = join(self.case_directory, file_name+'.opt')
+        for x in xrange(1, 10000):
+            tmp = tmp_path + str(x)
+            if not os.path.exists(tmp):
+                return tmp
+        return join(self.case_directory, 'Exception.txt')
+
+    def __write_node(self, node):
+        with open(join(self.txt_directory, '%d.txt' % node.get_id()), 'w') as w_file:
+            w_file.write(node.get_eigenvalue()+'\n')
+            for open_action in node.get_open():
+                w_file.write(str(open_action)+'\n')
+            w_file.write('\n')
+            w_file.write(self.current_dump+'\n')
+            w_file.write(self.current_dump_screenshot+'\n')
+            w_file.write('\n\n')
+
+    def __modify_node(self, id, eigenvalue, window_nodes):
+        with open(join(self.txt_directory, '%d.txt' % id)) as r_file:
+            if eigenvalue in r_file.read():
+                return True
+        with open(join(self.txt_directory, '%d.txt' % id), 'a+') as w_file:
+            w_file.write(eigenvalue+'\n')
+            for open_action in window_nodes:
+                w_file.write(str(open_action)+'\n')
+            w_file.write('\n')
+            w_file.write(self.current_dump+'\n')
+            w_file.write(self.current_dump_screenshot+'\n')
+            w_file.write('\n\n')
+
 if __name__ == '__main__':
-    package_name = "com.kugou.android"
-    activity_name = '.app.MediaActivity'
-    package_name = "com.android.mms"
-    activity_name = '.ui.ConversationList'
+    package_name = "com.tencent.mm"
+    activity_name = '.ui.LauncherUI'
+    # package_name = "org.codeaurora.snapcam"
+    # activity_name = 'com.android.camera.CameraActivity'
     d = Debug(project='SDM660', package_name=package_name,activity_name=activity_name)
     d.main()

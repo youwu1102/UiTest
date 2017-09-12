@@ -44,4 +44,16 @@
 	<class id="41" name="android.widget.AdapterView" type="common" />
 	<class id="42" name="android.widget.ToggleButton" type="common" />
 	<class id="43" name="android.widget.Gallery" type="common" />
+	<class id="44" name="android.view.NotificationHeaderView$2" type="common" />
+	<class id="45" name="android.widget.ImageSwitcher" type="common" />
+	<class id="46" name="android.widget.ViewFlipper" type="common" />
+	<class id="47" name="android.widget.AdapterViewFlipper" type="common" />
+	<class id="48" name="android.widget.RatingBar" type="common" />
+	<class id="49" name="android.widget.TableLayout" type="common" />
+	<class id="50" name="android.support.v7.app.ActionBar$b" type="common" />
+	<class id="51" name="android.support.v4.widget.SlidingPaneLayout" type="common" />
+	<class id="52" name="com.jingdong.common.babel.common.utils.view.LinearLayoutTab" type="common" />
+	<class id="53" name="com.tencent.mm.ui.mogic.WxViewPager" type="common" />
+	<class id="54" name="com.android.internal.widget.ViewPager" type="common" />
+	<class id="55" name="com.tencent.mm.ui.MMImageView" type="common" />
 	</root>

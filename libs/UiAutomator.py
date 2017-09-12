@@ -44,8 +44,6 @@ class UiAutomator(object):
         except Exception:
             return self.get_current_package_name()
 
-
-
     def press_home(self):
         Utility.output_msg('Press Home Key')
         return self.device.press.home()
