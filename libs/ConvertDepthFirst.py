@@ -136,5 +136,5 @@ class Convert(object):
 
 if __name__ == '__main__':
     c =Convert()
-    c.text_to_xml('C:\cygwin64\home\c_youwu\UiTest\\repository\CaseUtils\SDM660\\com.jingdong.app.mall\\')
+    c.text_to_xml('C:\cygwin64\home\c_youwu\UiTest\\repository\CaseUtils\SDM660\\com.tencent.mm\\')
 
